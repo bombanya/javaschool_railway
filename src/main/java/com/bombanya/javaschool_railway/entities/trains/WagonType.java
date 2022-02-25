@@ -15,11 +15,8 @@ import javax.persistence.*;
 public class WagonType {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "wagon_type_seq")
-    @SequenceGenerator(name = "wagon_type_seq",
-            sequenceName = "wagon_type_wagon_type_id_seq",
-            allocationSize = 1)
-    @Column(name = "wagon_type_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "wagon_type_id", nullable = false)
     private Integer id;
 
     @Column(name = "name", nullable = false, unique = true)

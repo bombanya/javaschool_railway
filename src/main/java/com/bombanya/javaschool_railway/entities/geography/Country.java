@@ -2,7 +2,6 @@ package com.bombanya.javaschool_railway.entities.geography;
 
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 import org.hibernate.annotations.NaturalId;
 
 import javax.persistence.*;
@@ -11,15 +10,11 @@ import javax.persistence.*;
 @Table(name = "country")
 @Getter
 @Setter
-@ToString
 public class Country {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "country_seq")
-    @SequenceGenerator(name = "country_seq",
-            sequenceName = "country_country_id_seq",
-            allocationSize = 1)
-    @Column(name = "country_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "country_id", nullable = false)
     private Integer id;
 
     @Column(name = "name", nullable = false, unique = true)
