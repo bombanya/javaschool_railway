@@ -21,6 +21,7 @@
         <lombok.version>1.18.22</lombok.version>
         <reactive-streams.version>1.0.1</reactive-streams.version>
         <spring-orm.version>5.3.16</spring-orm.version>
+        <postgresql.version>42.3.3</postgresql.version>
     </properties>
 
     <dependencies>
@@ -67,6 +68,11 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-orm</artifactId>
             <version>${spring-orm.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>${postgresql.version}</version>
         </dependency>
 
     </dependencies>
