@@ -1,8 +1,6 @@
 package com.bombanya.javaschool_railway.entities.geography;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import javax.persistence.*;
 
@@ -11,6 +9,9 @@ import javax.persistence.*;
 @Setter
 @Getter
 @ToString
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Settlement {
 
     @Id
@@ -24,7 +25,7 @@ public class Settlement {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @ManyToOne
+    @ManyToOne(cascade = {CascadeType.PERSIST})
     @JoinColumn(name = "region_id", nullable = false)
     private Region region;
 
