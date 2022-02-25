@@ -24,7 +24,7 @@ public class Station {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @ManyToOne
+    @ManyToOne(cascade = {CascadeType.PERSIST})
     @JoinColumn(name = "settlement_id", nullable = false)
     private Settlement settlement;
 }

@@ -24,7 +24,7 @@ public class Region {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @ManyToOne
+    @ManyToOne(cascade = {CascadeType.PERSIST})
     @JoinColumn(name = "country_id", nullable = false)
     private Country country;
 }
