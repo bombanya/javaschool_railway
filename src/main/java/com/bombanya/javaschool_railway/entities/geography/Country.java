@@ -1,4 +1,4 @@
-package com.bombanya.javaschool_railway.entities;
+package com.bombanya.javaschool_railway.entities.geography;
 
 import lombok.Getter;
 import lombok.Setter;
