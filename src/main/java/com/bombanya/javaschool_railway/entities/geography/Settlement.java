@@ -8,24 +8,20 @@ import javax.persistence.*;
 @Table(name = "settlement")
 @Setter
 @Getter
-@ToString
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class Settlement {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "settlement_seq")
-    @SequenceGenerator(name = "settlement_seq",
-            sequenceName = "settlement_settlement_id_seq",
-            allocationSize = 1)
-    @Column(name = "settlement_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "settlement_id", nullable = false)
     private Integer id;
 
     @Column(name = "name", nullable = false)
     private String name;
 
-    @ManyToOne(cascade = {CascadeType.PERSIST})
+    @ManyToOne(cascade = {CascadeType.PERSIST}, fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "region_id", nullable = false)
     private Region region;
 
