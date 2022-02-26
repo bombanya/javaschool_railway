@@ -1,9 +1,14 @@
 package com.bombanya.javaschool_railway.entities.trains;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.*;
 
 @Entity
 @Table(name = "wagon")
+@Getter
+@Setter
 public class Wagon {
 
     @Id
@@ -11,7 +16,7 @@ public class Wagon {
     @Column(name = "wagon_id", nullable = false)
     private Integer id;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false, cascade = {CascadeType.PERSIST})
     @JoinColumn(name = "wagon_type_id", nullable = false)
     private WagonType wagonType;
 
