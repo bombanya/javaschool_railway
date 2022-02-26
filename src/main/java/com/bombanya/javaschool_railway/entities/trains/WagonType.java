@@ -2,7 +2,6 @@ package com.bombanya.javaschool_railway.entities.trains;
 
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 import org.hibernate.annotations.NaturalId;
 
 import javax.persistence.*;
@@ -11,7 +10,6 @@ import javax.persistence.*;
 @Table(name = "wagon_type")
 @Getter
 @Setter
-@ToString
 public class WagonType {
 
     @Id
