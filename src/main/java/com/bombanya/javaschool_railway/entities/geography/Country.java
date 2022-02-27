@@ -1,5 +1,7 @@
 package com.bombanya.javaschool_railway.entities.geography;
 
+import com.bombanya.javaschool_railway.JacksonView;
+import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.NaturalId;
@@ -19,5 +21,6 @@ public class Country {
 
     @Column(name = "name", nullable = false, unique = true)
     @NaturalId
+    @JsonView(JacksonView.UserInfo.class)
     private String name;
 }
