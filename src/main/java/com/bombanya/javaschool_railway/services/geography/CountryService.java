@@ -1,4 +1,4 @@
-package com.bombanya.javaschool_railway.services;
+package com.bombanya.javaschool_railway.services.geography;
 
 import com.bombanya.javaschool_railway.dao.geography.CountryDAO;
 import com.bombanya.javaschool_railway.entities.geography.Country;
@@ -41,5 +41,17 @@ public class CountryService {
                 .success(true)
                 .httpStatus(HttpStatus.OK)
                 .build();
+    }
+
+    public ServiceAnswer<Country> getCountryByName(String name){
+        Country country = dao.findByName(name);
+        if (country == null){
+            return ServiceAnswer.<Country>builder()
+                    .success(false)
+                    .httpStatus(HttpStatus.NOT_FOUND)
+                    .errorMessage("No such country")
+                    .build();
+        }
+        return ServiceAnswer.ok(country);
     }
 }
