@@ -3,11 +3,13 @@ package com.bombanya.javaschool_railway.dao.geography;
 import com.bombanya.javaschool_railway.entities.geography.Country;
 import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.transaction.Transactional;
+import javax.persistence.PersistenceException;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class CountryDAOImpl implements CountryDAO {
@@ -16,26 +18,30 @@ public class CountryDAOImpl implements CountryDAO {
     private EntityManager em;
 
     @Override
-    @Transactional
+    @Transactional(noRollbackFor = PersistenceException.class)
     public void save(Country country) {
         em.persist(country);
     }
 
     @Override
-    @Transactional
-    public Country findById(int id) {
-        return em.find(Country.class, id);
+    @Transactional(readOnly = true)
+    public Optional<Country> findById(int id) {
+        return Optional.ofNullable(em.find(Country.class, id));
     }
 
     @Override
-    @Transactional
-    public Country findByName(String name) {
-        return em.unwrap(Session.class).bySimpleNaturalId(Country.class).load(name);
+    @Transactional(readOnly = true)
+    public Optional<Country> findByName(String name) {
+        return Optional.ofNullable(em.unwrap(Session.class)
+                .bySimpleNaturalId(Country.class)
+                .load(name));
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public List<Country> findAll() {
-        return em.createQuery("select c from Country c", Country.class).getResultList();
+        return em.createQuery("select c from Country c",
+                        Country.class)
+                .getResultList();
     }
 }

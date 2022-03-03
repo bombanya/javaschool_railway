@@ -1,12 +1,16 @@
 package com.bombanya.javaschool_railway.dao.geography;
 
 import com.bombanya.javaschool_railway.entities.geography.Region;
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.transaction.Transactional;
+import javax.persistence.PersistenceException;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class RegionDAOImpl implements RegionDAO {
@@ -15,31 +19,35 @@ public class RegionDAOImpl implements RegionDAO {
     private EntityManager em;
 
     @Override
-    @Transactional
+    @Transactional(noRollbackFor = PersistenceException.class)
     public void save(Region region) {
         em.persist(region);
     }
 
     @Override
-    @Transactional
-    public Region findById(int id) {
-        return em.find(Region.class, id);
+    @Transactional(readOnly = true)
+    public Optional<Region> findById(int id) {
+        return Optional.ofNullable(em.find(Region.class, id,
+                Collections.singletonMap("javax.persistence.fetchgraph",
+                        em.getEntityGraph("region.fetch_country"))));
     }
 
     @Override
-    @Transactional
-    public Region findByNameAndCountryName(String name, String countryName) {
-        return em.createQuery("select r from Region r join fetch " +
-                "Country c where r.name = :name and c.name = :countryName"
+    @Transactional(readOnly = true)
+    public Optional<Region> findByNameAndCountryName(String name, String countryName) {
+        return Optional.ofNullable(em.createQuery("select r from Region r join fetch " +
+                "r.country c where r.name = :name and c.name = :countryName"
                         , Region.class)
                 .setParameter("name", name)
                 .setParameter("countryName", countryName)
-                .getSingleResult();
+                .getSingleResult());
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public List<Region> findAll() {
-        return em.createQuery("select r from Region r", Region.class).getResultList();
+        return em.createQuery("select r from Region r join fetch r.country"
+                , Region.class)
+                .getResultList();
     }
 }

@@ -17,6 +17,7 @@ public class Country {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "country_id", nullable = false)
+    @JsonView(JacksonView.UserInfo.class)
     private Integer id;
 
     @Column(name = "name", nullable = false, unique = true)

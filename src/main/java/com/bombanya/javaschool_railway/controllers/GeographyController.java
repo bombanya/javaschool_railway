@@ -1,11 +1,12 @@
 package com.bombanya.javaschool_railway.controllers;
 
 import com.bombanya.javaschool_railway.JacksonView;
+import com.bombanya.javaschool_railway.entities.ServiceAnswer;
 import com.bombanya.javaschool_railway.entities.geography.Country;
 import com.bombanya.javaschool_railway.entities.geography.Region;
+import com.bombanya.javaschool_railway.services.ServiceAnswerHelper;
 import com.bombanya.javaschool_railway.services.geography.CountryService;
 import com.bombanya.javaschool_railway.services.geography.RegionService;
-import com.bombanya.javaschool_railway.services.geography.ServiceAnswer;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -23,30 +24,27 @@ public class GeographyController {
 
     @PostMapping("/country/new/{country}")
     @JsonView(JacksonView.UserInfo.class)
-    public ResponseEntity<ServiceAnswer<?>> saveNewCountry(@PathVariable String country){
-        ServiceAnswer<?> result = countryService.saveNewCountry(country);
-        return ResponseEntity.status(result.getHttpStatus()).body(result);
+    public ResponseEntity<ServiceAnswer<Country>> saveNewCountry(@PathVariable String country){
+        return ServiceAnswerHelper.wrapIntoResponse(countryService.saveNewCountry(country));
     }
 
     @GetMapping("/country/all")
     @JsonView(JacksonView.UserInfo.class)
     public ResponseEntity<ServiceAnswer<List<Country>>> getAllCountries(){
-        ServiceAnswer<List<Country>> result = countryService.getAllCountries();
-        return ResponseEntity.status(result.getHttpStatus()).body(result);
+        return ServiceAnswerHelper.wrapIntoResponse(countryService.getAllCountries());
     }
 
     @PostMapping("/region/new/{country}/{region}")
     @JsonView(JacksonView.UserInfo.class)
-    public ResponseEntity<ServiceAnswer<?>> saveNewRegion(@PathVariable String country,
+    public ResponseEntity<ServiceAnswer<Region>> saveNewRegion(@PathVariable String country,
                                                           @PathVariable String region){
-        ServiceAnswer<?> result = regionService.saveNewRegion(country, region);
-        return ResponseEntity.status(result.getHttpStatus()).body(result);
+        return ServiceAnswerHelper.wrapIntoResponse(regionService.saveNewRegion(country, region));
     }
 
     @GetMapping("/region/all")
     @JsonView(JacksonView.UserInfo.class)
     public ResponseEntity<ServiceAnswer<List<Region>>> getAllRegions(){
-        ServiceAnswer<List<Region>> result = regionService.getAllRegions();
-        return ResponseEntity.status(result.getHttpStatus()).body(result);
+        return ServiceAnswerHelper.wrapIntoResponse(regionService.getAllRegions());
     }
+
 }

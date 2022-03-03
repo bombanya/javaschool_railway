@@ -1,4 +1,4 @@
-package com.bombanya.javaschool_railway.services.geography;
+package com.bombanya.javaschool_railway.entities;
 
 import com.bombanya.javaschool_railway.JacksonView;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -19,7 +19,5 @@ public class ServiceAnswer<T> {
     @JsonView(JacksonView.UserInfo.class)
     private final String errorMessage;
 
-    public static <T> ServiceAnswer<T> ok(T serviceResult){
-        return new ServiceAnswer<>(serviceResult, true, HttpStatus.OK, null);
-    }
+
 }

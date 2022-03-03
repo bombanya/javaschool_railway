@@ -72,6 +72,7 @@ public class AppConfig {
     public HibernateTransactionManager transactionManager() {
         HibernateTransactionManager transactionManager = new HibernateTransactionManager();
         transactionManager.setSessionFactory(sessionFactory().getObject());
+        transactionManager.setValidateExistingTransaction(true);
         return transactionManager;
     }
 
