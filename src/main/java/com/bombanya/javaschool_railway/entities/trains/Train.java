@@ -1,5 +1,7 @@
 package com.bombanya.javaschool_railway.entities.trains;
 
+import com.bombanya.javaschool_railway.JacksonView;
+import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -16,12 +18,14 @@ public class Train {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "train_id", nullable = false)
+    @JsonView(JacksonView.UserInfo.class)
     private Integer id;
 
-    @ManyToMany(cascade = {CascadeType.PERSIST}, fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "train_wagons",
             joinColumns = @JoinColumn(name = "train_id"),
             inverseJoinColumns = @JoinColumn(name = "wagon_id"))
+    @JsonView(JacksonView.UserInfo.class)
     private List<Wagon> wagons = new ArrayList<>();
 
 }

@@ -3,9 +3,13 @@ package com.bombanya.javaschool_railway.controllers;
 import com.bombanya.javaschool_railway.JacksonView;
 import com.bombanya.javaschool_railway.entities.ServiceAnswer;
 import com.bombanya.javaschool_railway.entities.trains.Seat;
+import com.bombanya.javaschool_railway.entities.trains.Train;
+import com.bombanya.javaschool_railway.entities.trains.Wagon;
 import com.bombanya.javaschool_railway.entities.trains.WagonType;
 import com.bombanya.javaschool_railway.services.ServiceAnswerHelper;
 import com.bombanya.javaschool_railway.services.trains.SeatService;
+import com.bombanya.javaschool_railway.services.trains.TrainService;
+import com.bombanya.javaschool_railway.services.trains.WagonService;
 import com.bombanya.javaschool_railway.services.trains.WagonTypeService;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.RequiredArgsConstructor;
@@ -21,11 +25,13 @@ public class TrainsController {
 
     private final WagonTypeService wagonTypeService;
     private final SeatService seatService;
+    private final WagonService wagonService;
+    private final TrainService trainService;
 
     @PostMapping("/wagontype/new/{name}/{toilets}")
     @JsonView(JacksonView.UserInfo.class)
     public ResponseEntity<ServiceAnswer<WagonType>> saveNewWagonType(@PathVariable String name,
-                                                                     @PathVariable Integer toilets){
+                                                                     @PathVariable int toilets){
         return ServiceAnswerHelper.wrapIntoResponse(wagonTypeService.saveNew(name, toilets));
     }
 
@@ -51,5 +57,30 @@ public class TrainsController {
     @JsonView(JacksonView.UserInfo.class)
     public ResponseEntity<ServiceAnswer<List<Seat>>> getAllSeats(){
         return ServiceAnswerHelper.wrapIntoResponse(seatService.getAll());
+    }
+
+    @PostMapping("/wagon/new/{wagonTypeId}/{number}")
+    @JsonView(JacksonView.UserInfo.class)
+    public ResponseEntity<ServiceAnswer<List<Wagon>>> saveNewWagons(@PathVariable int wagonTypeId,
+                                                                    @PathVariable int number){
+        return ServiceAnswerHelper.wrapIntoResponse(wagonService.saveNewWagons(wagonTypeId, number));
+    }
+
+    @GetMapping("/wagon/all")
+    @JsonView(JacksonView.UserInfo.class)
+    public ResponseEntity<ServiceAnswer<List<Wagon>>> getAllWagons(){
+        return ServiceAnswerHelper.wrapIntoResponse(wagonService.getAll());
+    }
+
+    @PostMapping("/train/new")
+    @JsonView(JacksonView.UserInfo.class)
+    public ResponseEntity<ServiceAnswer<Train>> saneNewTrain(@RequestBody Train train){
+        return ServiceAnswerHelper.wrapIntoResponse(trainService.saveNew(train));
+    }
+
+    @GetMapping("/train/all")
+    @JsonView(JacksonView.UserInfo.class)
+    public ResponseEntity<ServiceAnswer<List<Train>>> getAllTrains(){
+        return ServiceAnswerHelper.wrapIntoResponse(trainService.getAll());
     }
 }

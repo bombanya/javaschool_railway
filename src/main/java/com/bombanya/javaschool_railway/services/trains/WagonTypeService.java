@@ -21,8 +21,8 @@ public class WagonTypeService {
     private final WagonTypeDAO dao;
 
     @Transactional
-    public ServiceAnswer<WagonType> saveNew(String name, Integer toilets){
-        if (name == null || toilets == null) return ServiceAnswerHelper.badRequest("fields cannot be null");
+    public ServiceAnswer<WagonType> saveNew(String name, int toilets){
+        if (name == null) return ServiceAnswerHelper.badRequest("name cannot be null");
         try{
             WagonType wagonType = new WagonType();
             wagonType.setName(name);
@@ -57,7 +57,7 @@ public class WagonTypeService {
     }
 
     @Transactional(readOnly = true)
-    public ServiceAnswer<WagonType> getById(Integer id){
+    public ServiceAnswer<WagonType> getById(int id){
         return dao.findById(id)
                 .map(ServiceAnswerHelper::ok)
                 .orElseGet(() -> ServiceAnswer.<WagonType>builder()
