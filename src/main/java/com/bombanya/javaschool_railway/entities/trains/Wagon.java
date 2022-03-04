@@ -16,7 +16,7 @@ public class Wagon {
     @Column(name = "wagon_id", nullable = false)
     private Integer id;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false, cascade = {CascadeType.PERSIST})
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "wagon_type_id", nullable = false)
     private WagonType wagonType;
 
