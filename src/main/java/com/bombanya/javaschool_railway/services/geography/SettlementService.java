@@ -84,7 +84,7 @@ public class SettlementService {
     }
     
     @Transactional(readOnly = true)
-    public ServiceAnswer<Settlement> getById(Integer id){
+    public ServiceAnswer<Settlement> getById(int id){
         return dao.findById(id)
                 .map(ServiceAnswerHelper::ok)
                 .orElseGet(() -> ServiceAnswer.<Settlement>builder()

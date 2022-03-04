@@ -73,7 +73,7 @@ public class GeographyController {
 
     @PostMapping("/station/new/id/{settlId}/{name}")
     @JsonView(JacksonView.UserInfo.class)
-    public ResponseEntity<ServiceAnswer<Station>> saveNewStationBySettlId(@PathVariable Integer settlId,
+    public ResponseEntity<ServiceAnswer<Station>> saveNewStationBySettlId(@PathVariable int settlId,
                                                                           @PathVariable String name){
         return ServiceAnswerHelper.wrapIntoResponse(stationService.saveNewBySettlId(settlId, name));
     }

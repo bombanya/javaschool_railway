@@ -22,7 +22,7 @@ public class StationService {
     private final SettlementService settlementService;
 
     @Transactional
-    public ServiceAnswer<Station> saveNewBySettlId(Integer settlId, String name){
+    public ServiceAnswer<Station> saveNewBySettlId(int settlId, String name){
         if (name == null) return ServiceAnswerHelper.badRequest("name cannot be null");
         ServiceAnswer<Settlement> settlement = settlementService.getById(settlId);
         if (!settlement.isSuccess()){
