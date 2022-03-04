@@ -21,6 +21,7 @@ public class CountryService {
 
     @Transactional
     public ServiceAnswer<Country> saveNew(String countryName){
+        if (countryName == null) return ServiceAnswerHelper.badRequest("name cannot be null");
         try{
             Country newCountry = new Country();
             newCountry.setName(countryName);

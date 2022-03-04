@@ -23,6 +23,7 @@ public class StationService {
 
     @Transactional
     public ServiceAnswer<Station> saveNewBySettlId(Integer settlId, String name){
+        if (name == null) return ServiceAnswerHelper.badRequest("name cannot be null");
         ServiceAnswer<Settlement> settlement = settlementService.getById(settlId);
         if (!settlement.isSuccess()){
             return ServiceAnswer.<Station>builder()

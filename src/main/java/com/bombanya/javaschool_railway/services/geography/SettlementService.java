@@ -28,6 +28,7 @@ public class SettlementService {
                                              String regionName,
                                              String name,
                                              String timeZone){
+        if (name == null || timeZone == null) return ServiceAnswerHelper.badRequest("fields cannot be null");
         ServiceAnswer<Region> region =
                 regionService.getByNameAndCountryName(countryName, regionName);
         if (!region.isSuccess()){

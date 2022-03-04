@@ -23,6 +23,7 @@ public class RegionService {
 
     @Transactional
     public ServiceAnswer<Region> saveNew(String countryName, String name){
+        if (name == null) return ServiceAnswerHelper.badRequest("name cannot be null");
         ServiceAnswer<Country> countryCheck = countryService.getByName(countryName);
         if (!countryCheck.isSuccess()) return ServiceAnswer.<Region>builder()
                 .success(false)
