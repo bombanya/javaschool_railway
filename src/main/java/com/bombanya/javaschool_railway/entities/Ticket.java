@@ -3,6 +3,7 @@ package com.bombanya.javaschool_railway.entities;
 import com.bombanya.javaschool_railway.entities.geography.Station;
 import com.bombanya.javaschool_railway.entities.routes.Run;
 import com.bombanya.javaschool_railway.entities.trains.Seat;
+import com.bombanya.javaschool_railway.entities.trains.Wagon;
 import lombok.*;
 
 import javax.persistence.*;
@@ -28,6 +29,10 @@ public class Ticket {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "seat_id", nullable = false)
     private Seat seat;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "wagon_id", nullable = false)
+    private Wagon wagon;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "passenger_id", nullable = false)

@@ -38,14 +38,14 @@ create table wagon (
 
 create table seat (
     seat_id serial primary key,
-    wagon_id integer not null references wagon on update cascade on delete restrict,
+    wagon_type_id integer not null references wagon_type on update cascade on delete restrict,
     inside_wagon_id integer not null,
     class integer not null,
     power_socket boolean not null,
     lying boolean not null,
     upper boolean not null,
     next_to_table boolean not null,
-    unique (wagon_id, inside_wagon_id)
+    unique (wagon_type_id, inside_wagon_id)
 );
 
 create table train (
@@ -97,8 +97,10 @@ create table ticket (
     ticket_id serial primary key,
     run_id integer not null references run on update cascade on delete restrict,
     seat_id integer not null references seat on update cascade on delete restrict,
+    wagon_id integer not null references wagon on update cascade on delete restrict,
     passenger_id integer not null references passenger on update cascade on delete restrict,
     start_station_id integer not null references station on update cascade on delete restrict,
     finish_station_id integer not null references station on update cascade on delete restrict,
-    price integer not null
+    price integer not null,
+    unique (run_id, seat_id, wagon_id)
 );

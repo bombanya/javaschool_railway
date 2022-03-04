@@ -18,9 +18,9 @@ public class Seat {
     @Column(name = "seat_id", nullable = false)
     private Integer id;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false, cascade = {CascadeType.PERSIST})
-    @JoinColumn(name = "wagon_id", nullable = false)
-    private Wagon wagon;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "wagon_type_id", nullable = false)
+    private WagonType wagonType;
 
     @Column(name = "inside_wagon_id", nullable = false)
     private Integer insideWagonId;
