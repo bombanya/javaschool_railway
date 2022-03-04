@@ -22,8 +22,8 @@ public class RegionService {
     private final CountryService countryService;
 
     @Transactional
-    public ServiceAnswer<Region> saveNewRegion(String countryName, String name){
-        ServiceAnswer<Country> countryCheck = countryService.getCountryByName(countryName);
+    public ServiceAnswer<Region> saveNew(String countryName, String name){
+        ServiceAnswer<Country> countryCheck = countryService.getByName(countryName);
         if (!countryCheck.isSuccess()) return ServiceAnswer.<Region>builder()
                 .success(false)
                 .errorMessage(countryCheck.getErrorMessage())
@@ -47,7 +47,7 @@ public class RegionService {
     }
 
     @Transactional(readOnly = true)
-    public ServiceAnswer<List<Region>> getAllRegions(){
+    public ServiceAnswer<List<Region>> getAll(){
         return ServiceAnswerHelper.ok(dao.findAll());
     }
 

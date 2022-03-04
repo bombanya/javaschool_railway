@@ -24,10 +24,10 @@ public class SettlementService {
     private final RegionService regionService;
 
     @Transactional
-    public ServiceAnswer<Settlement> saveNewSettlement(String countryName,
-                                                       String regionName,
-                                                       String name,
-                                                       String timeZone){
+    public ServiceAnswer<Settlement> saveNew(String countryName,
+                                             String regionName,
+                                             String name,
+                                             String timeZone){
         ServiceAnswer<Region> region =
                 regionService.getByNameAndCountryName(countryName, regionName);
         if (!region.isSuccess()){
@@ -65,7 +65,7 @@ public class SettlementService {
     }
 
     @Transactional(readOnly = true)
-    public ServiceAnswer<List<Settlement>> getAllSettlements(){
+    public ServiceAnswer<List<Settlement>> getAll(){
         return ServiceAnswerHelper.ok(dao.findAll());
     }
 
@@ -74,6 +74,17 @@ public class SettlementService {
                                                 String regionName,
                                                 String name){
         return dao.findByNames(countryName, regionName, name)
+                .map(ServiceAnswerHelper::ok)
+                .orElseGet(() -> ServiceAnswer.<Settlement>builder()
+                        .success(false)
+                        .httpStatus(HttpStatus.NOT_FOUND)
+                        .errorMessage("No such settlement")
+                        .build());
+    }
+    
+    @Transactional(readOnly = true)
+    public ServiceAnswer<Settlement> getById(Integer id){
+        return dao.findById(id)
                 .map(ServiceAnswerHelper::ok)
                 .orElseGet(() -> ServiceAnswer.<Settlement>builder()
                         .success(false)
