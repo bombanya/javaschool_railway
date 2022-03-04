@@ -52,7 +52,7 @@ public class RegionService {
     }
 
     @Transactional(readOnly = true)
-    public ServiceAnswer<Region> findByNameAndCountryName(String countryName, String name){
+    public ServiceAnswer<Region> getByNameAndCountryName(String countryName, String name){
         return dao.findByNameAndCountryName(name, countryName)
                 .map(ServiceAnswerHelper::ok)
                 .orElseGet(() -> ServiceAnswer.<Region>builder()

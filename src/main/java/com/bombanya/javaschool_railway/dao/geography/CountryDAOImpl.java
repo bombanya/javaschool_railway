@@ -25,7 +25,8 @@ public class CountryDAOImpl implements CountryDAO {
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<Country> findById(int id) {
+    public Optional<Country> findById(Integer id) {
+        if (id == null) return Optional.empty();
         return Optional.ofNullable(em.find(Country.class, id));
     }
 

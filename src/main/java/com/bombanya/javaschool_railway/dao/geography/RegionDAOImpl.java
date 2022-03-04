@@ -1,7 +1,6 @@
 package com.bombanya.javaschool_railway.dao.geography;
 
 import com.bombanya.javaschool_railway.entities.geography.Region;
-import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,7 +25,8 @@ public class RegionDAOImpl implements RegionDAO {
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<Region> findById(int id) {
+    public Optional<Region> findById(Integer id) {
+        if (id == null) return Optional.empty();
         return Optional.ofNullable(em.find(Region.class, id,
                 Collections.singletonMap("javax.persistence.fetchgraph",
                         em.getEntityGraph("region.fetch_country"))));
