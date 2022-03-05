@@ -25,7 +25,7 @@ public class Train {
     @JoinTable(name = "train_wagons",
             joinColumns = @JoinColumn(name = "train_id"),
             inverseJoinColumns = @JoinColumn(name = "wagon_id"))
-    @JsonView(JacksonView.UserInfo.class)
+    @JsonView(JacksonView.TrainFullInfo.class)
     private List<Wagon> wagons = new ArrayList<>();
 
 }

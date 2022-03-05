@@ -74,7 +74,7 @@ public class TrainsController {
 
     @PostMapping("/train/new")
     @JsonView(JacksonView.UserInfo.class)
-    public ResponseEntity<ServiceAnswer<Train>> saneNewTrain(@RequestBody Train train){
+    public ResponseEntity<ServiceAnswer<Train>> saveNewTrain(@RequestBody Train train){
         return ServiceAnswerHelper.wrapIntoResponse(trainService.saveNew(train));
     }
 

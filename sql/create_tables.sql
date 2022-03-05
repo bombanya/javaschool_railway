@@ -71,7 +71,8 @@ create table route_stations (
     stage_distance integer not null check ( stage_distance >= 0 ),
     stage_departure bigint not null check ( stage_departure >= 0 ),            --delta in minutes to run start
     stage_arrival bigint not null check ( stage_arrival >= 0 ),                --same
-    primary key (route_id, station_id)
+    primary key (route_id, station_id),
+    unique (route_id, serial_number_on_the_route)
 );
 
 create table run (

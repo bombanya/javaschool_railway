@@ -3,7 +3,7 @@ package com.bombanya.javaschool_railway.services.trains;
 import com.bombanya.javaschool_railway.dao.trains.TrainDAO;
 import com.bombanya.javaschool_railway.entities.ServiceAnswer;
 import com.bombanya.javaschool_railway.entities.trains.Train;
-import com.bombanya.javaschool_railway.entities.trains.WagonType;
+import com.bombanya.javaschool_railway.entities.trains.Wagon;
 import com.bombanya.javaschool_railway.services.ServiceAnswerHelper;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.exception.ConstraintViolationException;
@@ -36,5 +36,16 @@ public class TrainService {
     @Transactional(readOnly = true)
     public ServiceAnswer<List<Train>> getAll(){
         return ServiceAnswerHelper.ok(dao.findAll());
+    }
+
+    @Transactional(readOnly = true)
+    public ServiceAnswer<Train> getById(int id){
+        return dao.findById(id)
+                .map(ServiceAnswerHelper::ok)
+                .orElseGet(() -> ServiceAnswer.<Train>builder()
+                        .success(false)
+                        .httpStatus(HttpStatus.NOT_FOUND)
+                        .errorMessage("No such train")
+                        .build());
     }
 }

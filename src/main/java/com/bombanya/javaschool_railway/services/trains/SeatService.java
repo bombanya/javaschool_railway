@@ -3,7 +3,6 @@ package com.bombanya.javaschool_railway.services.trains;
 import com.bombanya.javaschool_railway.dao.trains.SeatDAO;
 import com.bombanya.javaschool_railway.entities.ServiceAnswer;
 import com.bombanya.javaschool_railway.entities.trains.Seat;
-import com.bombanya.javaschool_railway.entities.trains.WagonType;
 import com.bombanya.javaschool_railway.services.ServiceAnswerHelper;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.exception.ConstraintViolationException;
