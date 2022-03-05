@@ -12,9 +12,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -58,5 +60,33 @@ public class RunService {
                         .httpStatus(HttpStatus.NOT_FOUND)
                         .errorMessage("No such run")
                         .build());
+    }
+
+    @Transactional(readOnly = true)
+    public ServiceAnswer<List<Run>> getByStartAndFinishSettlementsAndStartDay(int settlFrom,
+                                                                              int settlTo,
+                                                                              LocalDate date){
+        return ServiceAnswerHelper.ok(routeService.getByStartAndFinishSettlements(settlFrom, settlTo)
+                .getServiceResult()
+                .stream()
+                .flatMap(route -> dao.findByRouteId(route.getId()).stream())
+                .filter(run -> {
+                    RouteStation startStation = run.getRoute()
+                            .getRouteStations()
+                            .stream()
+                            .filter(routeStation -> routeStation
+                                    .getStation()
+                                    .getSettlement()
+                                    .getId()
+                                    .equals(settlFrom))
+                            .findFirst()
+                            .get();
+                    return run.getStartUtc().plus(startStation
+                            .getStageDeparture(), ChronoUnit.MINUTES)
+                            .atZone(startStation.getStation().getSettlement().getTimeZone())
+                            .toLocalDate()
+                            .equals(date);
+                })
+                .collect(Collectors.toList()));
     }
 }

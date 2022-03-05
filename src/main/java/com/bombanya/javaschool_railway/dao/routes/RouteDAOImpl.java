@@ -44,4 +44,19 @@ public class RouteDAOImpl implements RouteDAO {
                 .setHint(QueryHints.HINT_PASS_DISTINCT_THROUGH, false)
                 .getResultList();
     }
+
+    @Override
+    public List<Route> findByTwoSettlements(int settl1, int settl2) {
+        return em.createQuery("select distinct r from Route r join fetch " +
+                                "r.routeStations rs join fetch rs.station s " +
+                                "join fetch s.settlement where " +
+                                "r.id in (select r1.id from Route r1 join r1.routeStations " +
+                                "rs1 where rs1.station.settlement.id = :settl1) " +
+                                "and r.id in (select r2.id from Route r2 join r2.routeStations " +
+                                "rs2 where rs2.station.settlement.id = :settl2)",
+                        Route.class)
+                .setParameter("settl1", settl1)
+                .setParameter("settl2", settl2)
+                .getResultList();
+    }
 }

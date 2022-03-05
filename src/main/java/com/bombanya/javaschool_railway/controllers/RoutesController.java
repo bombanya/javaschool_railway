@@ -11,10 +11,12 @@ import com.bombanya.javaschool_railway.services.routes.RouteStationService;
 import com.bombanya.javaschool_railway.services.routes.RunService;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -62,5 +64,16 @@ public class RoutesController {
     @JsonView(JacksonView.UserInfo.class)
     public ResponseEntity<ServiceAnswer<List<Run>>> getAllRuns(){
         return ServiceAnswerHelper.wrapIntoResponse(runService.getAll());
+    }
+
+    @GetMapping("/run/search/noticketchecking/{settlFromId}/{settleToId}/{date}")
+    @JsonView(JacksonView.UserInfo.class)
+    public ResponseEntity<ServiceAnswer<List<Run>>> searchForRunsNoTicketsChecking(@PathVariable int settlFromId,
+                                                                                   @PathVariable int settleToId,
+                                                                                   @PathVariable
+                                                                                   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+                                                                                               LocalDate date){
+        return ServiceAnswerHelper.wrapIntoResponse(runService
+                .getByStartAndFinishSettlementsAndStartDay(settlFromId, settleToId, date));
     }
 }
