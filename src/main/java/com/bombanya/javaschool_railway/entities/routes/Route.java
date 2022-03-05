@@ -5,10 +5,8 @@ import com.bombanya.javaschool_railway.entities.trains.Train;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -25,11 +23,11 @@ public class Route {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "train_id", nullable = false)
-    @JsonView(JacksonView.UserInfo.class)
+    @JsonView(JacksonView.RouteFullInfo.class)
     private Train train;
 
     @OneToMany(mappedBy = "route", fetch = FetchType.LAZY)
-    @JsonView(JacksonView.UserInfo.class)
+    @JsonView(JacksonView.RouteFullInfo.class)
     private List<RouteStation> routeStations;
 
 }
