@@ -47,8 +47,9 @@ public class RunDAOImpl implements RunDAO {
     @Override
     public List<Run> findByRouteId(int routeId) {
         return em.createQuery("select distinct run from Run run join fetch run.route r " +
-                "join fetch r.routeStations rs join fetch rs.station s join fetch s.settlement " +
-                "where r.id =:routeId",
+                "join fetch r.routeStations rs join fetch rs.station s join fetch s.settlement settl " +
+                                "join fetch settl.region reg join fetch reg.country c " +
+                "where r.id = :routeId",
                         Run.class)
                 .setParameter("routeId", routeId)
                 .getResultList();

@@ -48,4 +48,11 @@ public class Ticket {
 
     @Column(name = "price", nullable = false)
     private Integer price;
+
+    @Column(name = "start_serial", nullable = false)
+    private Integer startSerial;
+
+    @Column(name = "finish_serial", nullable = false)
+    private Integer finishSerial;
+
 }

@@ -7,6 +7,7 @@ import lombok.Setter;
 import org.hibernate.annotations.NaturalId;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "wagon_type")
@@ -28,5 +29,8 @@ public class WagonType {
     @Column(name = "toilets", nullable = false)
     @JsonView(JacksonView.UserInfo.class)
     private Integer toilets;
+
+    @OneToMany(mappedBy = "wagonType")
+    private List<Seat> seats;
 
 }

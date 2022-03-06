@@ -12,11 +12,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -63,30 +62,41 @@ public class RunService {
     }
 
     @Transactional(readOnly = true)
-    public ServiceAnswer<List<Run>> getByStartAndFinishSettlementsAndStartDay(int settlFrom,
-                                                                              int settlTo,
-                                                                              LocalDate date){
-        return ServiceAnswerHelper.ok(routeService.getByStartAndFinishSettlements(settlFrom, settlTo)
-                .getServiceResult()
-                .stream()
-                .flatMap(route -> dao.findByRouteId(route.getId()).stream())
-                .filter(run -> {
-                    RouteStation startStation = run.getRoute()
-                            .getRouteStations()
-                            .stream()
-                            .filter(routeStation -> routeStation
-                                    .getStation()
-                                    .getSettlement()
-                                    .getId()
-                                    .equals(settlFrom))
-                            .findFirst()
-                            .get();
-                    return run.getStartUtc().plus(startStation
-                            .getStageDeparture(), ChronoUnit.MINUTES)
-                            .atZone(startStation.getStation().getSettlement().getTimeZone())
-                            .toLocalDate()
-                            .equals(date);
-                })
-                .collect(Collectors.toList()));
+    public ServiceAnswer<List<Run>> getAllByRouteId(int routeId){
+        return ServiceAnswerHelper.ok(dao.findByRouteId(routeId));
     }
+
+    @Transactional(readOnly = true)
+    public ServiceAnswer<RouteStation> getRouteStationFromRunBySettlId(Run run, int settlId){
+        return run.getRoute()
+                .getRouteStations()
+                .stream()
+                .filter(routeStation -> routeStation
+                        .getStation()
+                        .getSettlement()
+                        .getId()
+                        .equals(settlId))
+                .findFirst()
+                .map(ServiceAnswerHelper::ok)
+                .orElseGet(() ->
+                        ServiceAnswerHelper.badRequest("No such settlement on the run"));
+    }
+
+    @Transactional(readOnly = true)
+    public LocalDateTime getStationLocalTimeDeparture(Run run, RouteStation station){
+        return run.getStartUtc()
+                .plus(station.getStageDeparture(), ChronoUnit.MINUTES)
+                .atZone(station.getStation().getSettlement().getTimeZone())
+                .toLocalDateTime();
+    }
+
+    @Transactional(readOnly = true)
+    public LocalDateTime getStationLocalTimeArrival(Run run, RouteStation station){
+        return run.getStartUtc()
+                .plus(station.getStageArrival(), ChronoUnit.MINUTES)
+                .atZone(station.getStation().getSettlement().getTimeZone())
+                .toLocalDateTime();
+    }
+
+
 }
