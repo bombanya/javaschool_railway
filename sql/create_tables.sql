@@ -89,10 +89,10 @@ create table passenger (
     surname text not null,
     patronymic text,
     birth_date date not null,
-    passport_series integer not null, -- totally unsafe I suppose
-    passport_number integer not null,
-    unique (passport_series, passport_number)
+    passport_id integer not null unique -- totally unsafe I suppose
 );
+
+create extension btree_gist;
 
 create table ticket (
     ticket_id serial primary key,
@@ -102,6 +102,10 @@ create table ticket (
     passenger_id integer not null references passenger on update cascade on delete restrict,
     start_station_id integer not null references station on update cascade on delete restrict,
     finish_station_id integer not null references station on update cascade on delete restrict,
+    start_serial integer not null check ( start_serial >= 0 ),
+    finish_serial integer not null check ( finish_serial >= 0 ),
     price integer not null,
-    unique (run_id, seat_id, wagon_id)
+    stations_range int4range generated always as ( int4range(start_serial, finish_serial, '[)') ) stored,
+    check ( start_station_id != ticket.finish_station_id ),
+    exclude using gist (run_id with =, seat_id with =, wagon_id with =, stations_range with &&)
 );
