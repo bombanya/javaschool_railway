@@ -4,6 +4,7 @@ import com.bombanya.javaschool_railway.dao.TicketDAO;
 import com.bombanya.javaschool_railway.entities.ServiceAnswer;
 import com.bombanya.javaschool_railway.entities.routes.Route;
 import com.bombanya.javaschool_railway.entities.routes.Run;
+import com.bombanya.javaschool_railway.entities.trains.Seat;
 import com.bombanya.javaschool_railway.services.routes.RunService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -32,7 +33,7 @@ public class TicketService {
     }
 
     @Transactional(readOnly = true)
-    public int countPrice(Route route, int serialFrom, int serialTo){
+    public int countPrice(Route route, int serialFrom, int serialTo, Seat seat){
         return 0;
     }
 }

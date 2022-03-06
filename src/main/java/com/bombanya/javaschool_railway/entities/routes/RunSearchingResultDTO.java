@@ -25,7 +25,5 @@ public class RunSearchingResultDTO {
     @JsonView(JacksonView.UserInfo.class)
     private final LocalDateTime finishStationTimeArrival;
     @JsonView(JacksonView.UserInfo.class)
-    private final int price;
-    @JsonView(JacksonView.UserInfo.class)
     private final int ticketsAvailable;
 }

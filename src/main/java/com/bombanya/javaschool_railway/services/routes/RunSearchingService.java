@@ -67,9 +67,6 @@ public class RunSearchingService {
                 .finishStation(to.getStation())
                 .startStationTimeDeparture(runService.getStationLocalTimeDeparture(run, from))
                 .finishStationTimeArrival(runService.getStationLocalTimeArrival(run, to))
-                .price(ticketService.countPrice(run.getRoute(),
-                        from.getSerialNumberOnTheRoute(),
-                        to.getSerialNumberOnTheRoute()))
                 .ticketsAvailable(ticketService.countAvailableTickets(run.getId(),
                                 from.getSerialNumberOnTheRoute(),
                                 to.getSerialNumberOnTheRoute())
