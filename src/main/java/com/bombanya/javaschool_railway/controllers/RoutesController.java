@@ -81,15 +81,15 @@ public class RoutesController {
                 .getByStartAndFinishSettlementsAndStartDay(settlFromId, settleToId, date));
     }
 
-    @GetMapping("/run/search/check/{settlFromId}/{settleToId}/{date}")
+    @GetMapping("/run/search/check/{settlFromId}/{settlToId}/{date}")
     @JsonView(JacksonView.UserInfo.class)
     public ResponseEntity<ServiceAnswer<List<RunSearchingResultDTO>>>
     searchForRuns(@PathVariable int settlFromId,
-                  @PathVariable int settleToId,
+                  @PathVariable int settlToId,
                   @PathVariable
                   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
                           LocalDate date){
         return ServiceAnswerHelper.wrapIntoResponse(runSearchingService
-                .searchForRuns(settlFromId, settleToId, date));
+                .searchForRuns(settlFromId, settlToId, date));
     }
 }

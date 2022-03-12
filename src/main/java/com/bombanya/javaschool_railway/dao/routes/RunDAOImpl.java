@@ -1,8 +1,6 @@
 package com.bombanya.javaschool_railway.dao.routes;
 
-import com.bombanya.javaschool_railway.entities.routes.Route;
 import com.bombanya.javaschool_railway.entities.routes.Run;
-import org.hibernate.jpa.QueryHints;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
