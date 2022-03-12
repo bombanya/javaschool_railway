@@ -73,13 +73,13 @@ public class TrainsController {
     }
 
     @PostMapping("/train/new")
-    @JsonView(JacksonView.UserInfo.class)
+    @JsonView(JacksonView.TrainFullInfo.class)
     public ResponseEntity<ServiceAnswer<Train>> saveNewTrain(@RequestBody Train train){
         return ServiceAnswerHelper.wrapIntoResponse(trainService.saveNew(train));
     }
 
     @GetMapping("/train/all")
-    @JsonView(JacksonView.UserInfo.class)
+    @JsonView(JacksonView.TrainFullInfo.class)
     public ResponseEntity<ServiceAnswer<List<Train>>> getAllTrains(){
         return ServiceAnswerHelper.wrapIntoResponse(trainService.getAll());
     }

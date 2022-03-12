@@ -1,9 +1,8 @@
-package com.bombanya.javaschool_railway.services.trains;
+package com.bombanya.javaschool_railway.services;
 
-import com.bombanya.javaschool_railway.dao.trains.TrainDAO;
+import com.bombanya.javaschool_railway.dao.PassengerDAO;
+import com.bombanya.javaschool_railway.entities.Passenger;
 import com.bombanya.javaschool_railway.entities.ServiceAnswer;
-import com.bombanya.javaschool_railway.entities.trains.Train;
-import com.bombanya.javaschool_railway.services.ServiceAnswerHelper;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
@@ -15,36 +14,35 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class TrainService {
+public class PassengerService {
 
-    private final TrainDAO dao;
+    private final PassengerDAO dao;
 
     @Transactional
-    public ServiceAnswer<Train> saveNew(Train train){
-        if (train == null) return ServiceAnswerHelper.badRequest("train cannot be null");
+    public ServiceAnswer<Passenger> saveNew(Passenger passenger) {
         try{
-            dao.save(train);
-            return ServiceAnswerHelper.ok(train);
+            dao.save(passenger);
+            return ServiceAnswerHelper.ok(passenger);
         } catch (PersistenceException e){
             if (e.getCause() == null ||
                     !e.getCause().getClass().equals(ConstraintViolationException.class)) throw e;
-            return ServiceAnswerHelper.badRequest("Constraint violation while creating train");
+            return ServiceAnswerHelper.badRequest("Constraint violation while saving passenger");
         }
     }
 
     @Transactional(readOnly = true)
-    public ServiceAnswer<List<Train>> getAll(){
+    public ServiceAnswer<List<Passenger>> getAll(){
         return ServiceAnswerHelper.ok(dao.findAll());
     }
 
     @Transactional(readOnly = true)
-    public ServiceAnswer<Train> getById(int id){
+    public ServiceAnswer<Passenger> getById(int id){
         return dao.findById(id)
                 .map(ServiceAnswerHelper::ok)
-                .orElseGet(() -> ServiceAnswer.<Train>builder()
+                .orElseGet(() -> ServiceAnswer.<Passenger>builder()
                         .success(false)
                         .httpStatus(HttpStatus.NOT_FOUND)
-                        .errorMessage("No such train")
+                        .errorMessage("No such wagon type")
                         .build());
     }
 }

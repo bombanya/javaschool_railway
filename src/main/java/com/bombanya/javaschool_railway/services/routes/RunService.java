@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Comparator;
 import java.util.List;
@@ -59,4 +60,43 @@ public class RunService {
                         .errorMessage("No such run")
                         .build());
     }
+
+    @Transactional(readOnly = true)
+    public ServiceAnswer<List<Run>> getAllByRouteId(int routeId){
+        return ServiceAnswerHelper.ok(dao.findByRouteId(routeId));
+    }
+
+    @Transactional(readOnly = true)
+    public ServiceAnswer<RouteStation> getRouteStationFromRunBySettlId(Run run, int settlId){
+        return run.getRoute()
+                .getRouteStations()
+                .stream()
+                .filter(routeStation -> routeStation
+                        .getStation()
+                        .getSettlement()
+                        .getId()
+                        .equals(settlId))
+                .findFirst()
+                .map(ServiceAnswerHelper::ok)
+                .orElseGet(() ->
+                        ServiceAnswerHelper.badRequest("No such settlement on the run"));
+    }
+
+    @Transactional(readOnly = true)
+    public LocalDateTime getStationLocalTimeDeparture(Run run, RouteStation station){
+        return run.getStartUtc()
+                .plus(station.getStageDeparture(), ChronoUnit.MINUTES)
+                .atZone(station.getStation().getSettlement().getTimeZone())
+                .toLocalDateTime();
+    }
+
+    @Transactional(readOnly = true)
+    public LocalDateTime getStationLocalTimeArrival(Run run, RouteStation station){
+        return run.getStartUtc()
+                .plus(station.getStageArrival(), ChronoUnit.MINUTES)
+                .atZone(station.getStation().getSettlement().getTimeZone())
+                .toLocalDateTime();
+    }
+
+
 }
