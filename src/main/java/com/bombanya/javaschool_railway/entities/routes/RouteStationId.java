@@ -1,7 +1,8 @@
 package com.bombanya.javaschool_railway.entities.routes;
 
-import lombok.Getter;
-import lombok.Setter;
+import com.bombanya.javaschool_railway.JacksonView;
+import com.fasterxml.jackson.annotation.JsonView;
+import lombok.*;
 import org.hibernate.Hibernate;
 
 import javax.persistence.Column;
@@ -16,9 +17,11 @@ public class RouteStationId implements Serializable {
     private static final long serialVersionUID = 618081359834747982L;
 
     @Column(name = "route_id", nullable = false)
+    @JsonView(JacksonView.UserInfo.class)
     private Integer routeId;
 
     @Column(name = "station_id", nullable = false)
+    @JsonView(JacksonView.UserInfo.class)
     private Integer stationId;
 
     @Override

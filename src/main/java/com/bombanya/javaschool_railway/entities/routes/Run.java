@@ -1,5 +1,7 @@
 package com.bombanya.javaschool_railway.entities.routes;
 
+import com.bombanya.javaschool_railway.JacksonView;
+import com.fasterxml.jackson.annotation.JsonView;
 import lombok.*;
 
 import javax.persistence.*;
@@ -17,15 +19,19 @@ public class Run {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "run_id", nullable = false)
+    @JsonView(JacksonView.UserInfo.class)
     private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "route_id", nullable = false)
+    @JsonView(JacksonView.UserInfo.class)
     private Route route;
 
     @Column(name = "start_utc", nullable = false)
+    @JsonView(JacksonView.UserInfo.class)
     private Instant startUtc;
 
     @Column(name = "finish_utc", nullable = false)
+    @JsonView(JacksonView.UserInfo.class)
     private Instant finishUtc;
 }

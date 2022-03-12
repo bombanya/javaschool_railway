@@ -20,7 +20,8 @@ public class CountryService {
     private final CountryDAO dao;
 
     @Transactional
-    public ServiceAnswer<Country> saveNewCountry(String countryName){
+    public ServiceAnswer<Country> saveNew(String countryName){
+        if (countryName == null) return ServiceAnswerHelper.badRequest("name cannot be null");
         try{
             Country newCountry = new Country();
             newCountry.setName(countryName);
@@ -42,12 +43,12 @@ public class CountryService {
     }
 
     @Transactional(readOnly = true)
-    public ServiceAnswer<List<Country>> getAllCountries(){
+    public ServiceAnswer<List<Country>> getAll(){
         return ServiceAnswerHelper.ok(dao.findAll());
     }
 
     @Transactional(readOnly = true)
-    public ServiceAnswer<Country> getCountryByName(String name){
+    public ServiceAnswer<Country> getByName(String name){
         return dao.findByName(name)
                 .map(ServiceAnswerHelper::ok)
                 .orElseGet(() -> ServiceAnswer.<Country>builder()

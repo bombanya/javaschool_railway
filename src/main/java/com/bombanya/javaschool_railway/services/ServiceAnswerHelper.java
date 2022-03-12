@@ -13,4 +13,8 @@ public class ServiceAnswerHelper {
     public static <T> ResponseEntity<ServiceAnswer<T>> wrapIntoResponse(ServiceAnswer<T> answer){
         return ResponseEntity.status(answer.getHttpStatus()).body(answer);
     }
+
+    public static <T> ServiceAnswer<T> badRequest(String message){
+        return new ServiceAnswer<>(null, false, HttpStatus.BAD_REQUEST, message);
+    }
 }

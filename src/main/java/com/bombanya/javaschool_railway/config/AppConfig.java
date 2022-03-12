@@ -16,6 +16,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 import java.util.Properties;
+import java.util.TimeZone;
 
 @Configuration
 @ComponentScan(basePackages = "com.bombanya.javaschool_railway")
@@ -32,8 +33,8 @@ public class AppConfig {
     }
 
     @PostConstruct
-    public void test(){
-        System.out.println("alive");
+    public void init(){
+        TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
     }
 
     @Bean
@@ -75,5 +76,4 @@ public class AppConfig {
         transactionManager.setValidateExistingTransaction(true);
         return transactionManager;
     }
-
 }
