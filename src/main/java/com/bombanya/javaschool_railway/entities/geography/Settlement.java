@@ -1,6 +1,6 @@
 package com.bombanya.javaschool_railway.entities.geography;
 
-import com.bombanya.javaschool_railway.JacksonView;
+import com.bombanya.javaschool_railway.utils.JacksonView;
 import com.bombanya.javaschool_railway.entities.customTypes.ZoneIdType;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.*;

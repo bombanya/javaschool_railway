@@ -1,4 +1,4 @@
-package com.bombanya.javaschool_railway;
+package com.bombanya.javaschool_railway.utils;
 
 public class JacksonView {
 

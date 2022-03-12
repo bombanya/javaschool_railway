@@ -1,6 +1,6 @@
 package com.bombanya.javaschool_railway.controllers;
 
-import com.bombanya.javaschool_railway.JacksonView;
+import com.bombanya.javaschool_railway.utils.JacksonView;
 import com.bombanya.javaschool_railway.entities.ServiceAnswer;
 import com.bombanya.javaschool_railway.entities.geography.Country;
 import com.bombanya.javaschool_railway.entities.geography.Region;
