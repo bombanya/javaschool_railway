@@ -26,4 +26,6 @@ public class RunSearchingResultDTO {
     private final LocalDateTime finishStationTimeArrival;
     @JsonView(JacksonView.UserInfo.class)
     private final int ticketsAvailable;
+    @JsonView(JacksonView.UserInfo.class)
+    private final long travelTime;
 }

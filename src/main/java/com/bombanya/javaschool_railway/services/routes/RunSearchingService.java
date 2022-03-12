@@ -71,6 +71,7 @@ public class RunSearchingService {
                                 from.getSerialNumberOnTheRoute(),
                                 to.getSerialNumberOnTheRoute())
                         .getServiceResult())
+                .travelTime(to.getStageArrival() - from.getStageDeparture())
                 .build();
     }
 }

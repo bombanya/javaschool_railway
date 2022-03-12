@@ -24,6 +24,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/routes")
+@CrossOrigin(origins = {"http://localhost:3000"})
 public class RoutesController {
 
     private final RouteService routeService;

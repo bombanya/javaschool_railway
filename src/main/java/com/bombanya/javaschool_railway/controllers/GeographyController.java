@@ -21,6 +21,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/geography")
 @RequiredArgsConstructor
+@CrossOrigin(origins = {"http://localhost:3000"})
 public class GeographyController {
 
     private final CountryService countryService;
@@ -69,6 +70,14 @@ public class GeographyController {
     @JsonView(JacksonView.UserInfo.class)
     public ResponseEntity<ServiceAnswer<List<Settlement>>> getAllSettlements(){
         return ServiceAnswerHelper.wrapIntoResponse(settlementService.getAll());
+    }
+
+    @GetMapping("/settlement/all/{nameStart}")
+    @JsonView(JacksonView.UserInfo.class)
+    public ResponseEntity<ServiceAnswer<List<Settlement>>> getAllSettlementsByNameStart(
+            @PathVariable String nameStart){
+        return ServiceAnswerHelper.wrapIntoResponse(settlementService
+                .getByNameStartsWith(nameStart));
     }
 
     @PostMapping("/station/new/id/{settlId}/{name}")
