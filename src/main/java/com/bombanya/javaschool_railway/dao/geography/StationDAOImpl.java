@@ -43,4 +43,16 @@ public class StationDAOImpl implements StationDAO {
                         Station.class)
                 .getResultList();
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Station> findByNameOrSettlNameStartsWith(String nameStart) {
+        nameStart = (nameStart + "%").toLowerCase();
+        return em.createQuery("select s from Station s join fetch s.settlement settl " +
+                "join fetch settl.region r join fetch r.country c where " +
+                "lower(s.name) like :nameStart or lower(settl.name) like :nameStart",
+                Station.class)
+                .setParameter("nameStart", nameStart)
+                .getResultList();
+    }
 }

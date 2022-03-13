@@ -53,4 +53,9 @@ public class StationService {
     public ServiceAnswer<List<Station>> getAll(){
         return ServiceAnswerHelper.ok(dao.findAll());
     }
+
+    @Transactional(readOnly = true)
+    public ServiceAnswer<List<Station>> getByNameOrSettlNameStartsWith(String nameStart){
+        return ServiceAnswerHelper.ok(dao.findByNameOrSettlNameStartsWith(nameStart));
+    }
 }

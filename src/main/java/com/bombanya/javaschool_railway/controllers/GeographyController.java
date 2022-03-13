@@ -92,4 +92,12 @@ public class GeographyController {
     public ResponseEntity<ServiceAnswer<List<Station>>> getAllStations(){
         return ServiceAnswerHelper.wrapIntoResponse(stationService.getAll());
     }
+
+    @GetMapping("/station/all/name/settlname/{nameStart}")
+    @JsonView(JacksonView.UserInfo.class)
+    public ResponseEntity<ServiceAnswer<List<Station>>> getByNameOrSettlNameStarts(
+            @PathVariable String nameStart){
+        return ServiceAnswerHelper.wrapIntoResponse(stationService
+                .getByNameOrSettlNameStartsWith(nameStart));
+    }
 }
