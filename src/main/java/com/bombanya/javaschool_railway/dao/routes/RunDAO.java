@@ -8,4 +8,6 @@ import java.util.List;
 public interface RunDAO extends DAO<Run, Integer> {
 
     List<Run> findByRouteId(int routeId);
+
+    List<Run> findByTrainId(int trainId);
 }

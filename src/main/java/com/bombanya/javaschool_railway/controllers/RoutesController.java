@@ -100,4 +100,10 @@ public class RoutesController {
         return ServiceAnswerHelper.wrapIntoResponse(runSearchingService
                 .searchForRuns(settlFromId, settlToId, date));
     }
+
+    @GetMapping("/run/trainschedule/{trainId}")
+    @JsonView(JacksonView.UserInfo.class)
+    public ResponseEntity<ServiceAnswer<List<RunSearchingResultDTO>>> getTrainSchedule(@PathVariable int trainId){
+        return ServiceAnswerHelper.wrapIntoResponse(runSearchingService.getTrainSchedule(trainId));
+    }
 }

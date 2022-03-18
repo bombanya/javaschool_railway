@@ -73,6 +73,11 @@ public class RunService {
     }
 
     @Transactional(readOnly = true)
+    public ServiceAnswer<List<Run>> getAllByTrainId(int trainId){
+        return ServiceAnswerHelper.ok(dao.findByTrainId(trainId));
+    }
+
+    @Transactional(readOnly = true)
     public ServiceAnswer<RouteStation> getRouteStationFromRunBySettlId(Run run, int settlId){
         return run.getRoute()
                 .getRouteStations()

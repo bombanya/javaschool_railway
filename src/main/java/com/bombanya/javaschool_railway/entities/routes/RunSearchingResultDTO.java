@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 
 @Builder
@@ -24,6 +25,10 @@ public class RunSearchingResultDTO {
     private final LocalDateTime startStationTimeDeparture;
     @JsonView(JacksonView.UserInfo.class)
     private final LocalDateTime finishStationTimeArrival;
+    @JsonView(JacksonView.UserInfo.class)
+    private final Instant startTime;
+    @JsonView(JacksonView.UserInfo.class)
+    private final Instant finishTime;
     @JsonView(JacksonView.UserInfo.class)
     private final int ticketsAvailable;
     @JsonView(JacksonView.UserInfo.class)
