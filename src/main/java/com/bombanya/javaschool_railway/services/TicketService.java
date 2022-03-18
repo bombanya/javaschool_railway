@@ -22,7 +22,6 @@ public class TicketService {
         ServiceAnswer<Run> run = runService.getById(runId);
         if (!run.isSuccess()) return ServiceAnswerHelper.badRequest(run.getErrorMessage());
         int allTickets = run.getServiceResult()
-                .getRoute()
                 .getTrain()
                 .getWagons()
                 .stream()

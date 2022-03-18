@@ -21,11 +21,6 @@ public class Route {
     @JsonView(JacksonView.UserInfo.class)
     private Integer id;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "train_id", nullable = false)
-    @JsonView(JacksonView.RouteFullInfo.class)
-    private Train train;
-
     @OneToMany(mappedBy = "route", fetch = FetchType.LAZY)
     @JsonView(JacksonView.RouteFullInfo.class)
     private List<RouteStation> routeStations;

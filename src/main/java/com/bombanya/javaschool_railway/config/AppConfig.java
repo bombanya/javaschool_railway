@@ -1,10 +1,8 @@
 package com.bombanya.javaschool_railway.config;
 
+import org.flywaydb.core.Flyway;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.*;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
@@ -61,6 +59,7 @@ public class AppConfig {
     }
 
     @Bean
+    @DependsOn("flyway")
     public LocalSessionFactoryBean sessionFactory() {
         LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
         sessionFactory.setDataSource(dataSource());
@@ -75,5 +74,19 @@ public class AppConfig {
         transactionManager.setSessionFactory(sessionFactory().getObject());
         transactionManager.setValidateExistingTransaction(true);
         return transactionManager;
+    }
+
+    @Bean
+    public Flyway flyway(){
+        Flyway flyway = Flyway.configure()
+                .dataSource(dataSource())
+                .locations("classpath:db")
+                .baselineDescription("init")
+                .baselineVersion("1.0")
+                .baselineOnMigrate(true)
+                .load();
+
+        flyway.migrate();
+        return flyway;
     }
 }

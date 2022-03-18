@@ -21,6 +21,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/trains")
 @RequiredArgsConstructor
+@CrossOrigin(origins = {"http://localhost:3000"})
 public class TrainsController {
 
     private final WagonTypeService wagonTypeService;

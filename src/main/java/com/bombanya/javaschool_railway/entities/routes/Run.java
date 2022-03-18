@@ -1,5 +1,6 @@
 package com.bombanya.javaschool_railway.entities.routes;
 
+import com.bombanya.javaschool_railway.entities.trains.Train;
 import com.bombanya.javaschool_railway.utils.JacksonView;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.*;
@@ -34,4 +35,9 @@ public class Run {
     @Column(name = "finish_utc", nullable = false)
     @JsonView(JacksonView.UserInfo.class)
     private Instant finishUtc;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "train_id", nullable = false)
+    @JsonView(JacksonView.UserInfo.class)
+    private Train train;
 }
