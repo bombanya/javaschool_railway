@@ -16,7 +16,7 @@ public class Station {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "station_id", nullable = false)
-    @JsonView(JacksonView.UserInfo.class)
+    @JsonView(JacksonView.MinimalInfo.class)
     private Integer id;
 
     @Column(name = "name", nullable = false)

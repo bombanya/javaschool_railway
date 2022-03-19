@@ -33,4 +33,6 @@ public class RunSearchingResultDTO {
     private final int ticketsAvailable;
     @JsonView(JacksonView.UserInfo.class)
     private final long travelTime;
+    @JsonView(JacksonView.UserInfo.class)
+    private final int routeId;
 }

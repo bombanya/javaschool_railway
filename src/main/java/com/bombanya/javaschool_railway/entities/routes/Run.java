@@ -20,7 +20,7 @@ public class Run {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "run_id", nullable = false)
-    @JsonView(JacksonView.UserInfo.class)
+    @JsonView(JacksonView.MinimalInfo.class)
     private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

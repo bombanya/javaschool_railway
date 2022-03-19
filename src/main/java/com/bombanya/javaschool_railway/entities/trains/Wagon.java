@@ -16,12 +16,12 @@ public class Wagon {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "wagon_id", nullable = false)
-    @JsonView(JacksonView.UserInfo.class)
+    @JsonView(JacksonView.MinimalInfo.class)
     private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "wagon_type_id", nullable = false)
-    @JsonView(JacksonView.UserInfo.class)
+    @JsonView(JacksonView.MinimalInfo.class)
     private WagonType wagonType;
 
 }

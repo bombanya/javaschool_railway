@@ -12,11 +12,11 @@ import org.springframework.http.HttpStatus;
 @Builder
 public class ServiceAnswer<T> {
 
-    @JsonView(JacksonView.UserInfo.class)
+    @JsonView(JacksonView.MinimalInfo.class)
     private final T serviceResult;
     private final boolean success;
     private final HttpStatus httpStatus;
-    @JsonView(JacksonView.UserInfo.class)
+    @JsonView(JacksonView.MinimalInfo.class)
     private final String errorMessage;
 
 

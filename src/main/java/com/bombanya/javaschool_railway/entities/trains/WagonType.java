@@ -18,16 +18,16 @@ public class WagonType {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "wagon_type_id", nullable = false)
-    @JsonView(JacksonView.UserInfo.class)
+    @JsonView(JacksonView.MinimalInfo.class)
     private Integer id;
 
     @Column(name = "name", nullable = false, unique = true)
     @NaturalId
-    @JsonView(JacksonView.UserInfo.class)
+    @JsonView(JacksonView.MinimalInfo.class)
     private String name;
 
     @Column(name = "toilets", nullable = false)
-    @JsonView(JacksonView.UserInfo.class)
+    @JsonView(JacksonView.MinimalInfo.class)
     private Integer toilets;
 
     @OneToMany(mappedBy = "wagonType")

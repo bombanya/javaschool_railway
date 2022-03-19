@@ -102,6 +102,7 @@ public class RunSearchingService {
                 .travelTime(to.getStageArrival() - from.getStageDeparture())
                 .startTime(run.getStartUtc())
                 .finishTime(run.getFinishUtc())
+                .routeId(run.getRoute().getId())
                 .build();
     }
 

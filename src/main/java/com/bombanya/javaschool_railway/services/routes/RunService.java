@@ -94,6 +94,21 @@ public class RunService {
     }
 
     @Transactional(readOnly = true)
+    public ServiceAnswer<RouteStation> getRouteStationFromRunByStationId(Run run, int stationId){
+        return run.getRoute()
+                .getRouteStations()
+                .stream()
+                .filter(routeStation -> routeStation
+                        .getStation()
+                        .getId()
+                        .equals(stationId))
+                .findFirst()
+                .map(ServiceAnswerHelper::ok)
+                .orElseGet(() ->
+                        ServiceAnswerHelper.badRequest("No such station on the run"));
+    }
+
+    @Transactional(readOnly = true)
     public LocalDateTime getStationLocalTimeDeparture(Run run, RouteStation station){
         return run.getStartUtc()
                 .plus(station.getStageDeparture(), ChronoUnit.MINUTES)
