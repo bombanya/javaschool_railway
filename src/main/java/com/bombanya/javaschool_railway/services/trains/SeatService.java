@@ -55,4 +55,15 @@ public class SeatService {
     public ServiceAnswer<List<Seat>> getAll(){
         return ServiceAnswerHelper.ok(dao.findAll());
     }
+
+    @Transactional(readOnly = true)
+    public ServiceAnswer<Seat> getById(int id){
+        return dao.findById(id)
+                .map(ServiceAnswerHelper::ok)
+                .orElseGet(() -> ServiceAnswer.<Seat>builder()
+                        .success(false)
+                        .httpStatus(HttpStatus.NOT_FOUND)
+                        .errorMessage("No such seat")
+                        .build());
+    }
 }

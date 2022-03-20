@@ -1,6 +1,7 @@
 package com.bombanya.javaschool_railway.dao;
 
 import com.bombanya.javaschool_railway.entities.Passenger;
+import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,5 +34,12 @@ public class PassengerDAOImpl implements PassengerDAO {
     @Transactional(readOnly = true)
     public List<Passenger> findAll() {
         return em.createQuery("select p from Passenger p", Passenger.class).getResultList();
+    }
+
+    @Override
+    public Optional<Passenger> findByPassport(String passportId) {
+        return Optional.ofNullable(em.unwrap(Session.class)
+                .bySimpleNaturalId(Passenger.class)
+                .load(passportId));
     }
 }

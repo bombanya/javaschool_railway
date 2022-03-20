@@ -20,7 +20,7 @@ public class Station {
     private Integer id;
 
     @Column(name = "name", nullable = false)
-    @JsonView(JacksonView.UserInfo.class)
+    @JsonView(JacksonView.MinimalInfo.class)
     private String name;
 
     @ManyToOne(cascade = {CascadeType.PERSIST}, fetch = FetchType.LAZY, optional = false)

@@ -8,21 +8,19 @@ import com.bombanya.javaschool_railway.utils.JacksonView;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/tickets")
 @RequiredArgsConstructor
+@CrossOrigin(origins = {"http://localhost:3000"})
 public class TicketController {
 
     private final TicketService ticketService;
 
-    @GetMapping("/ticket/available/{runId}/{stationFrom}/{stationTo}")
+    @GetMapping("/available/{runId}/{stationFrom}/{stationTo}")
     @JsonView(JacksonView.MinimalInfo.class)
     public ResponseEntity<ServiceAnswer<List<Ticket>>> getAvailableTickets(@PathVariable int runId,
                                                                            @PathVariable int stationFrom,
@@ -30,4 +28,15 @@ public class TicketController {
         return ServiceAnswerHelper.wrapIntoResponse(ticketService.getAvailableTickets(runId, stationFrom, stationTo));
     }
 
+    @PostMapping("/buy")
+    @JsonView(JacksonView.UserInfo.class)
+    public ResponseEntity<ServiceAnswer<Integer>> buyTickets(@RequestBody List<Ticket> tickets){
+        return ServiceAnswerHelper.wrapIntoResponse(ticketService.buyTickets(tickets));
+    }
+
+    @GetMapping("/all/{runId}")
+    @JsonView(JacksonView.MinimalInfo.class)
+    public ResponseEntity<ServiceAnswer<List<Ticket>>> getAllPurchasedRunTickets(@PathVariable int runId){
+        return ServiceAnswerHelper.wrapIntoResponse(ticketService.getAllPurchasedRunTickets(runId));
+    }
 }

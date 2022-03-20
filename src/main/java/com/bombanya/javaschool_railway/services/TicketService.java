@@ -9,12 +9,16 @@ import com.bombanya.javaschool_railway.entities.routes.Run;
 import com.bombanya.javaschool_railway.entities.trains.Seat;
 import com.bombanya.javaschool_railway.entities.trains.Wagon;
 import com.bombanya.javaschool_railway.services.routes.RunService;
+import com.bombanya.javaschool_railway.services.trains.SeatService;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.PersistenceException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -22,6 +26,7 @@ public class TicketService {
 
     private final TicketDAO dao;
     private final RunService runService;
+    private final SeatService seatService;
 
     @Transactional(readOnly = true)
     public ServiceAnswer<Integer> countAvailableTickets(int runId, int serialFrom, int serialTo){
@@ -87,5 +92,44 @@ public class TicketService {
                     .getStagePrice() * seat.getSeatClass();
         }
         return price;
+    }
+
+    @Transactional
+    public ServiceAnswer<Integer> buyTickets(List<Ticket> tickets){
+        try{
+            Run run = null;
+            for (Ticket ticket: tickets){
+                if (run == null || !Objects.equals(run.getId(), ticket.getRun().getId())){
+                    ServiceAnswer<Run> runWrapper = runService.getById(ticket.getRun().getId());
+                    if (!runWrapper.isSuccess()) throw new PersistenceException();
+                    run = runWrapper.getServiceResult();
+                }
+                ServiceAnswer<RouteStation> from = runService.getRouteStationFromRunByStationId(run,
+                        ticket.getStartStation().getId());
+                if (!from.isSuccess()) throw new PersistenceException();
+                ServiceAnswer<RouteStation> to = runService.getRouteStationFromRunByStationId(run,
+                        ticket.getFinishStation().getId());
+                if (!to.isSuccess()) throw new PersistenceException();
+                ticket.setStartSerial(from.getServiceResult().getSerialNumberOnTheRoute());
+                ticket.setFinishSerial(to.getServiceResult().getSerialNumberOnTheRoute());
+                ServiceAnswer<Seat> seatWrapper = seatService.getById(ticket.getSeat().getId());
+                if (!seatWrapper.isSuccess()) throw new PersistenceException();
+                ticket.setPrice(countPrice(run.getRoute(),
+                        from.getServiceResult().getSerialNumberOnTheRoute(),
+                        to.getServiceResult().getSerialNumberOnTheRoute(),
+                        seatWrapper.getServiceResult()));
+            }
+            dao.saveList(tickets);
+            return ServiceAnswerHelper.ok(null);
+        } catch (PersistenceException e){
+            if (e.getCause() == null ||
+                    !e.getCause().getClass().equals(ConstraintViolationException.class)) throw e;
+            return ServiceAnswerHelper.badRequest("Error in ticket ordering process");
+        }
+    }
+
+    @Transactional(readOnly = true)
+    public ServiceAnswer<List<Ticket>> getAllPurchasedRunTickets(int runId){
+        return ServiceAnswerHelper.ok(dao.getAllRunTickets(runId));
     }
 }

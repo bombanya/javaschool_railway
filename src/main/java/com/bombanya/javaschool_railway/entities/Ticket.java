@@ -42,7 +42,7 @@ public class Ticket {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "passenger_id", nullable = false)
-    @JsonView(JacksonView.UserInfo.class)
+    @JsonView(JacksonView.MinimalInfo.class)
     private Passenger passenger;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
