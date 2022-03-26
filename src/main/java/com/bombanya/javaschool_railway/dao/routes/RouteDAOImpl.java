@@ -28,7 +28,7 @@ public class RouteDAOImpl implements RouteDAO {
     public Optional<Route> findById(Integer integer) {
         if (integer == null) return Optional.empty();
         return Optional.ofNullable(em.createQuery("select distinct r from Route r " +
-                "join fetch r.train t left join fetch r.routeStations rs where r.id = :id",
+                "left join fetch r.routeStations rs where r.id = :id",
                 Route.class)
                 .setParameter("id", integer)
                 .setHint(QueryHints.HINT_PASS_DISTINCT_THROUGH, false)
@@ -39,7 +39,7 @@ public class RouteDAOImpl implements RouteDAO {
     @Transactional(readOnly = true)
     public List<Route> findAll() {
         return em.createQuery("select distinct r from Route r " +
-                        "join fetch r.train t left join fetch r.routeStations rs",
+                        "left join fetch r.routeStations rs",
                 Route.class)
                 .setHint(QueryHints.HINT_PASS_DISTINCT_THROUGH, false)
                 .getResultList();

@@ -93,4 +93,9 @@ public class SettlementService {
                         .errorMessage("No such settlement")
                         .build());
     }
+
+    @Transactional(readOnly = true)
+    public ServiceAnswer<List<Settlement>> getByNameStartsWith(String nameStart){
+        return ServiceAnswerHelper.ok(dao.findByNameStartsWith(nameStart));
+    }
 }

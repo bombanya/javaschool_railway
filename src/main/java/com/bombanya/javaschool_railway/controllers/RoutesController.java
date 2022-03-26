@@ -1,6 +1,6 @@
 package com.bombanya.javaschool_railway.controllers;
 
-import com.bombanya.javaschool_railway.JacksonView;
+import com.bombanya.javaschool_railway.utils.JacksonView;
 import com.bombanya.javaschool_railway.entities.ServiceAnswer;
 import com.bombanya.javaschool_railway.entities.routes.Route;
 import com.bombanya.javaschool_railway.entities.routes.RouteStation;
@@ -24,6 +24,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/routes")
+@CrossOrigin(origins = {"http://localhost:3000"})
 public class RoutesController {
 
     private final RouteService routeService;
@@ -31,16 +32,22 @@ public class RoutesController {
     private final RunService runService;
     private final RunSearchingService runSearchingService;
 
-    @PostMapping("/route/new/{trainId}")
+    @PostMapping("/route/new")
     @JsonView(JacksonView.RouteFullInfo.class)
-    public ResponseEntity<ServiceAnswer<Route>> saveNewRoute(@PathVariable int trainId){
-        return ServiceAnswerHelper.wrapIntoResponse(routeService.saveNew(trainId));
+    public ResponseEntity<ServiceAnswer<Route>> saveNewRoute(){
+        return ServiceAnswerHelper.wrapIntoResponse(routeService.saveNew());
     }
 
     @GetMapping("/route/all")
     @JsonView(JacksonView.RouteFullInfo.class)
     public ResponseEntity<ServiceAnswer<List<Route>>> getAllRoutes(){
         return ServiceAnswerHelper.wrapIntoResponse(routeService.getAll());
+    }
+
+    @GetMapping("/route/{id}")
+    @JsonView(JacksonView.RouteFullInfo.class)
+    public ResponseEntity<ServiceAnswer<Route>> getRouteById(@PathVariable int id){
+        return ServiceAnswerHelper.wrapIntoResponse(routeService.getById(id));
     }
 
     @PostMapping("/routestation/new/list")
@@ -50,17 +57,18 @@ public class RoutesController {
         return ServiceAnswerHelper.wrapIntoResponse(routeStationService.saveList(routeStations));
     }
 
-    @GetMapping("/routestations/all")
+    @GetMapping("/routestation/all")
     @JsonView(JacksonView.UserInfo.class)
     public ResponseEntity<ServiceAnswer<List<RouteStation>>> getAllRouteStations(){
         return ServiceAnswerHelper.wrapIntoResponse(routeStationService.getAll());
     }
 
-    @PostMapping("/run/new/{routeId}/{startUtc}")
+    @PostMapping("/run/new/{routeId}/{trainId}/{startUtc}")
     @JsonView(JacksonView.UserInfo.class)
     public ResponseEntity<ServiceAnswer<Run>> saveNewRun(@PathVariable int routeId,
+                                                         @PathVariable int trainId,
                                                          @PathVariable Instant startUtc){
-        return ServiceAnswerHelper.wrapIntoResponse(runService.saveNew(routeId, startUtc));
+        return ServiceAnswerHelper.wrapIntoResponse(runService.saveNew(routeId, trainId, startUtc));
     }
 
     @GetMapping("/run/all")
@@ -91,5 +99,11 @@ public class RoutesController {
                           LocalDate date){
         return ServiceAnswerHelper.wrapIntoResponse(runSearchingService
                 .searchForRuns(settlFromId, settlToId, date));
+    }
+
+    @GetMapping("/run/trainschedule/{trainId}")
+    @JsonView(JacksonView.UserInfo.class)
+    public ResponseEntity<ServiceAnswer<List<RunSearchingResultDTO>>> getTrainSchedule(@PathVariable int trainId){
+        return ServiceAnswerHelper.wrapIntoResponse(runSearchingService.getTrainSchedule(trainId));
     }
 }

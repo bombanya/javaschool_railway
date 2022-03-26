@@ -1,6 +1,6 @@
 package com.bombanya.javaschool_railway.controllers;
 
-import com.bombanya.javaschool_railway.JacksonView;
+import com.bombanya.javaschool_railway.utils.JacksonView;
 import com.bombanya.javaschool_railway.entities.ServiceAnswer;
 import com.bombanya.javaschool_railway.entities.geography.Country;
 import com.bombanya.javaschool_railway.entities.geography.Region;
@@ -21,6 +21,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/geography")
 @RequiredArgsConstructor
+@CrossOrigin(origins = {"http://localhost:3000"})
 public class GeographyController {
 
     private final CountryService countryService;
@@ -71,6 +72,14 @@ public class GeographyController {
         return ServiceAnswerHelper.wrapIntoResponse(settlementService.getAll());
     }
 
+    @GetMapping("/settlement/all/{nameStart}")
+    @JsonView(JacksonView.UserInfo.class)
+    public ResponseEntity<ServiceAnswer<List<Settlement>>> getAllSettlementsByNameStart(
+            @PathVariable String nameStart){
+        return ServiceAnswerHelper.wrapIntoResponse(settlementService
+                .getByNameStartsWith(nameStart));
+    }
+
     @PostMapping("/station/new/id/{settlId}/{name}")
     @JsonView(JacksonView.UserInfo.class)
     public ResponseEntity<ServiceAnswer<Station>> saveNewStationBySettlId(@PathVariable int settlId,
@@ -82,5 +91,13 @@ public class GeographyController {
     @JsonView(JacksonView.UserInfo.class)
     public ResponseEntity<ServiceAnswer<List<Station>>> getAllStations(){
         return ServiceAnswerHelper.wrapIntoResponse(stationService.getAll());
+    }
+
+    @GetMapping("/station/all/name/settlname/{nameStart}")
+    @JsonView(JacksonView.UserInfo.class)
+    public ResponseEntity<ServiceAnswer<List<Station>>> getByNameOrSettlNameStarts(
+            @PathVariable String nameStart){
+        return ServiceAnswerHelper.wrapIntoResponse(stationService
+                .getByNameOrSettlNameStartsWith(nameStart));
     }
 }

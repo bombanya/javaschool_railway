@@ -1,6 +1,6 @@
 package com.bombanya.javaschool_railway.entities;
 
-import com.bombanya.javaschool_railway.JacksonView;
+import com.bombanya.javaschool_railway.utils.JacksonView;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Builder;
 import lombok.Getter;
@@ -12,11 +12,11 @@ import org.springframework.http.HttpStatus;
 @Builder
 public class ServiceAnswer<T> {
 
-    @JsonView(JacksonView.UserInfo.class)
+    @JsonView(JacksonView.MinimalInfo.class)
     private final T serviceResult;
     private final boolean success;
     private final HttpStatus httpStatus;
-    @JsonView(JacksonView.UserInfo.class)
+    @JsonView(JacksonView.MinimalInfo.class)
     private final String errorMessage;
 
 

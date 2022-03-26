@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -58,6 +59,33 @@ public class RunSearchingService {
     }
 
     @Transactional(readOnly = true)
+    public ServiceAnswer<List<RunSearchingResultDTO>> getTrainSchedule(int trainId){
+        return ServiceAnswerHelper.ok(runService.getAllByTrainId(trainId)
+                .getServiceResult()
+                .stream()
+                .map(run -> getResultDTOFromRun(run,
+                        run
+                                .getRoute()
+                                .getRouteStations()
+                                .stream()
+                                .min(Comparator.comparing(RouteStation::getSerialNumberOnTheRoute))
+                                .get()
+                                .getStation()
+                                .getSettlement()
+                                .getId(),
+                        run
+                                .getRoute()
+                                .getRouteStations()
+                                .stream()
+                                .max(Comparator.comparing(RouteStation::getSerialNumberOnTheRoute))
+                                .get()
+                                .getStation()
+                                .getSettlement()
+                                .getId()))
+                .collect(Collectors.toList()));
+    }
+
+    @Transactional(readOnly = true)
     public RunSearchingResultDTO getResultDTOFromRun(Run run, int settlFrom, int settlTo){
         RouteStation from = runService.getRouteStationFromRunBySettlId(run, settlFrom).getServiceResult();
         RouteStation to = runService.getRouteStationFromRunBySettlId(run, settlTo).getServiceResult();
@@ -71,6 +99,11 @@ public class RunSearchingService {
                                 from.getSerialNumberOnTheRoute(),
                                 to.getSerialNumberOnTheRoute())
                         .getServiceResult())
+                .travelTime(to.getStageArrival() - from.getStageDeparture())
+                .startTime(run.getStartUtc())
+                .finishTime(run.getFinishUtc())
+                .routeId(run.getRoute().getId())
                 .build();
     }
+
 }

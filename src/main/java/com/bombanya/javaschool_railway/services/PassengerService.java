@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.PersistenceException;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -42,7 +43,24 @@ public class PassengerService {
                 .orElseGet(() -> ServiceAnswer.<Passenger>builder()
                         .success(false)
                         .httpStatus(HttpStatus.NOT_FOUND)
-                        .errorMessage("No such wagon type")
+                        .errorMessage("No such passenger")
                         .build());
     }
+
+    @Transactional
+    public ServiceAnswer<Integer> getPassengerCode(Passenger passenger){
+        Optional<Passenger> fromDb = dao.findByPassport(passenger.getPassportId());
+        if (fromDb.isPresent()){
+            if (passenger.equals(fromDb.get())){
+                return ServiceAnswerHelper.ok(fromDb.get().getId());
+            }
+            else return ServiceAnswerHelper.badRequest("Incorrect data");
+        }
+        else{
+            ServiceAnswer<Passenger> newPassengerWrapper = saveNew(passenger);
+            if (newPassengerWrapper.isSuccess()) return ServiceAnswerHelper.ok(passenger.getId());
+            else return ServiceAnswerHelper.badRequest(newPassengerWrapper.getErrorMessage());
+        }
+    }
+
 }

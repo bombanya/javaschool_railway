@@ -5,7 +5,9 @@ import com.bombanya.javaschool_railway.entities.ServiceAnswer;
 import com.bombanya.javaschool_railway.entities.routes.Route;
 import com.bombanya.javaschool_railway.entities.routes.RouteStation;
 import com.bombanya.javaschool_railway.entities.routes.Run;
+import com.bombanya.javaschool_railway.entities.trains.Train;
 import com.bombanya.javaschool_railway.services.ServiceAnswerHelper;
+import com.bombanya.javaschool_railway.services.trains.TrainService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -23,11 +25,14 @@ public class RunService {
 
     private final RunDAO dao;
     private final RouteService routeService;
+    private final TrainService trainService;
 
     @Transactional
-    public ServiceAnswer<Run> saveNew(int routeId, Instant startUtc) {
+    public ServiceAnswer<Run> saveNew(int routeId, int trainID, Instant startUtc) {
         ServiceAnswer<Route> route = routeService.getById(routeId);
+        ServiceAnswer<Train> train = trainService.getById(trainID);
         if (!route.isSuccess()) return ServiceAnswerHelper.badRequest(route.getErrorMessage());
+        if (!train.isSuccess()) return ServiceAnswerHelper.badRequest(train.getErrorMessage());
         if (route.getServiceResult().getRouteStations().size() == 0)
             return ServiceAnswerHelper.badRequest("You cannot plan empty route");
         long finish = route.getServiceResult()
@@ -38,6 +43,7 @@ public class RunService {
                 .getStageArrival();
         Run newRun = Run.builder()
                 .route(route.getServiceResult())
+                .train(train.getServiceResult())
                 .startUtc(startUtc)
                 .finishUtc(startUtc.plus(finish, ChronoUnit.MINUTES))
                 .build();
@@ -67,6 +73,11 @@ public class RunService {
     }
 
     @Transactional(readOnly = true)
+    public ServiceAnswer<List<Run>> getAllByTrainId(int trainId){
+        return ServiceAnswerHelper.ok(dao.findByTrainId(trainId));
+    }
+
+    @Transactional(readOnly = true)
     public ServiceAnswer<RouteStation> getRouteStationFromRunBySettlId(Run run, int settlId){
         return run.getRoute()
                 .getRouteStations()
@@ -80,6 +91,21 @@ public class RunService {
                 .map(ServiceAnswerHelper::ok)
                 .orElseGet(() ->
                         ServiceAnswerHelper.badRequest("No such settlement on the run"));
+    }
+
+    @Transactional(readOnly = true)
+    public ServiceAnswer<RouteStation> getRouteStationFromRunByStationId(Run run, int stationId){
+        return run.getRoute()
+                .getRouteStations()
+                .stream()
+                .filter(routeStation -> routeStation
+                        .getStation()
+                        .getId()
+                        .equals(stationId))
+                .findFirst()
+                .map(ServiceAnswerHelper::ok)
+                .orElseGet(() ->
+                        ServiceAnswerHelper.badRequest("No such station on the run"));
     }
 
     @Transactional(readOnly = true)

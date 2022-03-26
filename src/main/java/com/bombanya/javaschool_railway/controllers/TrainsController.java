@@ -1,6 +1,6 @@
 package com.bombanya.javaschool_railway.controllers;
 
-import com.bombanya.javaschool_railway.JacksonView;
+import com.bombanya.javaschool_railway.utils.JacksonView;
 import com.bombanya.javaschool_railway.entities.ServiceAnswer;
 import com.bombanya.javaschool_railway.entities.trains.Seat;
 import com.bombanya.javaschool_railway.entities.trains.Train;
@@ -21,6 +21,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/trains")
 @RequiredArgsConstructor
+@CrossOrigin(origins = {"http://localhost:3000"})
 public class TrainsController {
 
     private final WagonTypeService wagonTypeService;

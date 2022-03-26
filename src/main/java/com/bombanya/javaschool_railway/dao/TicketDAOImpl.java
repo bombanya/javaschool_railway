@@ -2,6 +2,7 @@ package com.bombanya.javaschool_railway.dao;
 
 import com.bombanya.javaschool_railway.entities.Ticket;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
@@ -41,6 +42,26 @@ public class TicketDAOImpl implements TicketDAO {
                         Ticket.class)
                 .setParameter("serialFrom", serialFrom)
                 .setParameter("serialTo", serialTo)
+                .setParameter("runId", runId)
+                .getResultList();
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void saveList(List<Ticket> tickets) {
+        for (Ticket ticket: tickets){
+            em.persist(ticket);
+        }
+    }
+
+    @Override
+    public List<Ticket> getAllRunTickets(int runId) {
+        return em.createQuery("select t from Ticket t join fetch t.run r " +
+                "join fetch t.seat s join fetch t.wagon w join fetch " +
+                "t.passenger p join fetch t.startStation join fetch t.finishStation " +
+                "join fetch w.wagonType " +
+                "where r.id = :runId",
+                        Ticket.class)
                 .setParameter("runId", runId)
                 .getResultList();
     }

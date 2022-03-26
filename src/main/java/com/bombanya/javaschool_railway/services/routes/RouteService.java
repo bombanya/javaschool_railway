@@ -4,7 +4,6 @@ import com.bombanya.javaschool_railway.dao.routes.RouteDAO;
 import com.bombanya.javaschool_railway.entities.ServiceAnswer;
 import com.bombanya.javaschool_railway.entities.routes.Route;
 import com.bombanya.javaschool_railway.entities.routes.RouteStation;
-import com.bombanya.javaschool_railway.entities.trains.Train;
 import com.bombanya.javaschool_railway.services.ServiceAnswerHelper;
 import com.bombanya.javaschool_railway.services.trains.TrainService;
 import lombok.RequiredArgsConstructor;
@@ -21,14 +20,10 @@ import java.util.stream.Collectors;
 public class RouteService {
 
     private final RouteDAO dao;
-    private final TrainService trainService;
 
     @Transactional
-    public ServiceAnswer<Route> saveNew(int trainId){
-        ServiceAnswer<Train> train = trainService.getById(trainId);
-        if (!train.isSuccess()) return ServiceAnswerHelper.badRequest(train.getErrorMessage());
+    public ServiceAnswer<Route> saveNew(){
         Route newRoute = new Route();
-        newRoute.setTrain(train.getServiceResult());
         newRoute.setRouteStations(new ArrayList<>());
         dao.save(newRoute);
         return ServiceAnswerHelper.ok(newRoute);

@@ -1,6 +1,6 @@
 package com.bombanya.javaschool_railway.controllers;
 
-import com.bombanya.javaschool_railway.JacksonView;
+import com.bombanya.javaschool_railway.utils.JacksonView;
 import com.bombanya.javaschool_railway.entities.Passenger;
 import com.bombanya.javaschool_railway.entities.ServiceAnswer;
 import com.bombanya.javaschool_railway.services.PassengerService;
@@ -15,6 +15,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/passenger")
 @RequiredArgsConstructor
+@CrossOrigin(origins = {"http://localhost:3000"})
 public class PassengerController {
 
     private final PassengerService passengerService;
@@ -29,5 +30,11 @@ public class PassengerController {
     @JsonView(JacksonView.UserInfo.class)
     public ResponseEntity<ServiceAnswer<List<Passenger>>> getAllPassengers(){
         return ServiceAnswerHelper.wrapIntoResponse(passengerService.getAll());
+    }
+
+    @PostMapping("/code")
+    @JsonView(JacksonView.UserInfo.class)
+    public ResponseEntity<ServiceAnswer<Integer>> getPassengerCode(@RequestBody Passenger passenger){
+        return ServiceAnswerHelper.wrapIntoResponse(passengerService.getPassengerCode(passenger));
     }
 }

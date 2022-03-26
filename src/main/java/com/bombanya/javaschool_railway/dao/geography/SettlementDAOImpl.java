@@ -50,6 +50,18 @@ public class SettlementDAOImpl implements SettlementDAO {
 
     @Override
     @Transactional(readOnly = true)
+    public List<Settlement> findByNameStartsWith(String nameStart) {
+        nameStart = (nameStart + "%").toLowerCase();
+        return em.createQuery("select s from Settlement s " +
+                "join fetch s.region r join fetch r.country c " +
+                "where lower(s.name) like :nameStart",
+                        Settlement.class)
+                .setParameter("nameStart", nameStart)
+                .getResultList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public List<Settlement> findAll() {
         return em.createQuery("select s from Settlement s " +
                 "join fetch s.region r join fetch r.country c ",
