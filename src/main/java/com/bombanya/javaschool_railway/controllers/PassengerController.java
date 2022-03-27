@@ -15,7 +15,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/passenger")
 @RequiredArgsConstructor
-@CrossOrigin(origins = {"http://localhost:3000"})
 public class PassengerController {
 
     private final PassengerService passengerService;
@@ -32,9 +31,5 @@ public class PassengerController {
         return ServiceAnswerHelper.wrapIntoResponse(passengerService.getAll());
     }
 
-    @PostMapping("/code")
-    @JsonView(JacksonView.UserInfo.class)
-    public ResponseEntity<ServiceAnswer<Integer>> getPassengerCode(@RequestBody Passenger passenger){
-        return ServiceAnswerHelper.wrapIntoResponse(passengerService.getPassengerCode(passenger));
-    }
+
 }

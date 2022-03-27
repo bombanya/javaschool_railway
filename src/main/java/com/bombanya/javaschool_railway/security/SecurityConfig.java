@@ -1,5 +1,6 @@
 package com.bombanya.javaschool_railway.security;
 
+import com.bombanya.javaschool_railway.security.entities.UserRole;
 import com.bombanya.javaschool_railway.security.filters.JwtAuthFilter;
 import com.bombanya.javaschool_railway.security.filters.JwtVerifyFilter;
 import com.bombanya.javaschool_railway.security.services.UserService;
@@ -16,6 +17,11 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+
+import java.util.Arrays;
+import java.util.Collections;
 
 @Configuration
 @EnableWebSecurity
@@ -29,6 +35,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
+                .cors(c -> {
+                    CorsConfigurationSource source = request -> {
+                        CorsConfiguration config = new CorsConfiguration();
+                        config.setAllowedOrigins(Collections.singletonList("http://localhost:3000"));
+                        config.setAllowedMethods(Arrays.asList("GET", "POST"));
+                        return config;
+                    };
+                    c.configurationSource(source);
+                })
                 .csrf().disable()
                 .sessionManagement()
                     .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
@@ -36,6 +51,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .addFilter(authFilter)
                 .addFilterAfter(verifyFilter, JwtAuthFilter.class)
                 .authorizeRequests()
+                .antMatchers("/public/**").permitAll()
+                .antMatchers("/api/**").hasRole(UserRole.ADMIN.name())
                 .anyRequest()
                 .authenticated();
     }

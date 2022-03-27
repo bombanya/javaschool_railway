@@ -24,7 +24,6 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/routes")
-@CrossOrigin(origins = {"http://localhost:3000"})
 public class RoutesController {
 
     private final RouteService routeService;
@@ -87,18 +86,6 @@ public class RoutesController {
                                            LocalDate date){
         return ServiceAnswerHelper.wrapIntoResponse(runSearchingService
                 .getByStartAndFinishSettlementsAndStartDay(settlFromId, settleToId, date));
-    }
-
-    @GetMapping("/run/search/check/{settlFromId}/{settlToId}/{date}")
-    @JsonView(JacksonView.UserInfo.class)
-    public ResponseEntity<ServiceAnswer<List<RunSearchingResultDTO>>>
-    searchForRuns(@PathVariable int settlFromId,
-                  @PathVariable int settlToId,
-                  @PathVariable
-                  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-                          LocalDate date){
-        return ServiceAnswerHelper.wrapIntoResponse(runSearchingService
-                .searchForRuns(settlFromId, settlToId, date));
     }
 
     @GetMapping("/run/trainschedule/{trainId}")
