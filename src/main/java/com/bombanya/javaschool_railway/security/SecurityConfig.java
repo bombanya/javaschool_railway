@@ -5,7 +5,6 @@ import com.bombanya.javaschool_railway.security.filters.JwtAuthFilter;
 import com.bombanya.javaschool_railway.security.filters.JwtVerifyFilter;
 import com.bombanya.javaschool_railway.security.services.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -26,7 +25,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebMvcConfigurer {
 
     private final UserService userService;
-    private JwtAuthFilter authFilter;
     private final JwtVerifyFilter verifyFilter;
 
     @Override
@@ -38,7 +36,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
                 .sessionManagement()
                     .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .addFilter(authFilter)
+                .addFilter(jwtAuthFilter())
                 .addFilterAfter(verifyFilter, JwtAuthFilter.class)
                 .authorizeRequests()
                 .antMatchers("/public/**").permitAll()
@@ -50,6 +48,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.authenticationProvider(daoAuthenticationProvider());
+    }
+
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**")
+                .allowedOrigins("http://localhost:3000")
+                .allowedMethods("GET", "POST")
+                .exposedHeaders("Authorization");
     }
 
     @Bean
@@ -71,16 +77,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
         return provider;
     }
 
-    @Autowired
-    public void setAuthFilter(JwtAuthFilter authFilter) {
-        this.authFilter = authFilter;
-    }
-
-    @Override
-    public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**")
-                .allowedOrigins("http://localhost:3000")
-                .allowedMethods("GET", "POST")
-                .exposedHeaders("Authorization");
+    @Bean
+    public JwtAuthFilter jwtAuthFilter() throws Exception {
+        return new JwtAuthFilter(authenticationManager());
     }
 }
