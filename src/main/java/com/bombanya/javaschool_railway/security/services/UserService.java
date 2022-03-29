@@ -3,13 +3,14 @@ package com.bombanya.javaschool_railway.security.services;
 import com.bombanya.javaschool_railway.entities.ServiceAnswer;
 import com.bombanya.javaschool_railway.security.dao.UserAccountDAO;
 import com.bombanya.javaschool_railway.security.entities.UserAccount;
-import com.bombanya.javaschool_railway.security.entities.UserAccountUserDetails;
 import com.bombanya.javaschool_railway.security.entities.UserRoleEntity;
 import com.bombanya.javaschool_railway.services.ServiceAnswerHelper;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -20,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.PersistenceException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -54,7 +56,21 @@ public class UserService implements UserDetailsService {
     @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return dao.findByUsername(username)
-                .map(UserAccountUserDetails::fromUserAccount)
+                .map(this::userAccountToUserDetails)
                 .orElseThrow(() -> new UsernameNotFoundException("User " + username + " not found"));
+    }
+
+    private UserDetails userAccountToUserDetails(UserAccount account){
+        return User.builder()
+                .username(account.getUsername())
+                .password(account.getPassword())
+                .authorities(account.getRoles()
+                        .stream()
+                        .map(userRoleEntity ->
+                                new SimpleGrantedAuthority("ROLE_" + userRoleEntity
+                                        .getName()
+                                        .name()))
+                        .collect(Collectors.toList()))
+                .build();
     }
 }
