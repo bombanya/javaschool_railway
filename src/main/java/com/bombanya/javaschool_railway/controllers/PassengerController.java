@@ -19,6 +19,14 @@ public class PassengerController {
 
     private final PassengerService passengerService;
 
+    //public
+    @PostMapping("/public/passenger/code")
+    @JsonView(JacksonView.UserInfo.class)
+    public ResponseEntity<ServiceAnswer<Integer>> getPassengerCode(@RequestBody Passenger passenger){
+        return ServiceAnswerHelper.wrapIntoResponse(passengerService.getPassengerCode(passenger));
+    }
+
+    //private
     @PostMapping("/new")
     @JsonView(JacksonView.UserInfo.class)
     public ResponseEntity<ServiceAnswer<Passenger>> saveNewPassenger(@RequestBody Passenger passenger){

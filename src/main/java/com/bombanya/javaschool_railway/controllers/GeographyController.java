@@ -28,6 +28,16 @@ public class GeographyController {
     private final SettlementService settlementService;
     private final StationService stationService;
 
+    //public
+    @GetMapping("/public/settlement/all/{nameStart}")
+    @JsonView(JacksonView.UserInfo.class)
+    public ResponseEntity<ServiceAnswer<List<Settlement>>> getAllSettlementsByNameStart(
+            @PathVariable String nameStart){
+        return ServiceAnswerHelper.wrapIntoResponse(settlementService
+                .getByNameStartsWith(nameStart));
+    }
+
+    //private
     @PostMapping("/country/new/{country}")
     @JsonView(JacksonView.UserInfo.class)
     public ResponseEntity<ServiceAnswer<Country>> saveNewCountry(@PathVariable String country){
