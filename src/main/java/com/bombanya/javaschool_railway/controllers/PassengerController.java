@@ -15,11 +15,18 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/passenger")
 @RequiredArgsConstructor
-@CrossOrigin(origins = {"http://localhost:3000"})
 public class PassengerController {
 
     private final PassengerService passengerService;
 
+    //public
+    @PostMapping("/public/passenger/code")
+    @JsonView(JacksonView.UserInfo.class)
+    public ResponseEntity<ServiceAnswer<Integer>> getPassengerCode(@RequestBody Passenger passenger){
+        return ServiceAnswerHelper.wrapIntoResponse(passengerService.getPassengerCode(passenger));
+    }
+
+    //private
     @PostMapping("/new")
     @JsonView(JacksonView.UserInfo.class)
     public ResponseEntity<ServiceAnswer<Passenger>> saveNewPassenger(@RequestBody Passenger passenger){
@@ -32,9 +39,5 @@ public class PassengerController {
         return ServiceAnswerHelper.wrapIntoResponse(passengerService.getAll());
     }
 
-    @PostMapping("/code")
-    @JsonView(JacksonView.UserInfo.class)
-    public ResponseEntity<ServiceAnswer<Integer>> getPassengerCode(@RequestBody Passenger passenger){
-        return ServiceAnswerHelper.wrapIntoResponse(passengerService.getPassengerCode(passenger));
-    }
+
 }

@@ -15,12 +15,12 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/tickets")
 @RequiredArgsConstructor
-@CrossOrigin(origins = {"http://localhost:3000"})
 public class TicketController {
 
     private final TicketService ticketService;
 
-    @GetMapping("/available/{runId}/{stationFrom}/{stationTo}")
+    //public
+    @GetMapping("/public/tickets/available/{runId}/{stationFrom}/{stationTo}")
     @JsonView(JacksonView.MinimalInfo.class)
     public ResponseEntity<ServiceAnswer<List<Ticket>>> getAvailableTickets(@PathVariable int runId,
                                                                            @PathVariable int stationFrom,
@@ -28,12 +28,13 @@ public class TicketController {
         return ServiceAnswerHelper.wrapIntoResponse(ticketService.getAvailableTickets(runId, stationFrom, stationTo));
     }
 
-    @PostMapping("/buy")
+    @PostMapping("/public/tickets/buy")
     @JsonView(JacksonView.UserInfo.class)
     public ResponseEntity<ServiceAnswer<Integer>> buyTickets(@RequestBody List<Ticket> tickets){
         return ServiceAnswerHelper.wrapIntoResponse(ticketService.buyTickets(tickets));
     }
 
+    //private
     @GetMapping("/all/{runId}")
     @JsonView(JacksonView.MinimalInfo.class)
     public ResponseEntity<ServiceAnswer<List<Ticket>>> getAllPurchasedRunTickets(@PathVariable int runId){
