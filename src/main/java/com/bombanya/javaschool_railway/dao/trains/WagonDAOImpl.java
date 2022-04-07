@@ -26,11 +26,12 @@ public class WagonDAOImpl implements WagonDAO {
     @Transactional(readOnly = true)
     public Optional<Wagon> findById(Integer integer) {
         if (integer == null) return Optional.empty();
-        return Optional.ofNullable(em.createQuery("select w from Wagon w " +
+        return em.createQuery("select w from Wagon w " +
                 "join fetch w.wagonType wt where w.id = :id",
                 Wagon.class)
                 .setParameter("id", integer)
-                .getSingleResult());
+                .getResultStream()
+                .findFirst();
     }
 
     @Override

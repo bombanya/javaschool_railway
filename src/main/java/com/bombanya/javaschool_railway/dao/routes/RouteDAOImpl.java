@@ -27,12 +27,13 @@ public class RouteDAOImpl implements RouteDAO {
     @Transactional(readOnly = true)
     public Optional<Route> findById(Integer integer) {
         if (integer == null) return Optional.empty();
-        return Optional.ofNullable(em.createQuery("select distinct r from Route r " +
+        return em.createQuery("select distinct r from Route r " +
                 "left join fetch r.routeStations rs where r.id = :id",
                 Route.class)
                 .setParameter("id", integer)
                 .setHint(QueryHints.HINT_PASS_DISTINCT_THROUGH, false)
-                .getSingleResult());
+                .getResultStream()
+                .findFirst();
     }
 
     @Override

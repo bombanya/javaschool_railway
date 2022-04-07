@@ -26,12 +26,13 @@ public class StationDAOImpl implements StationDAO {
     @Transactional(readOnly = true)
     public Optional<Station> findById(Integer integer) {
         if (integer == null) return Optional.empty();
-        return Optional.ofNullable(em.createQuery("select s from Station s " +
+        return em.createQuery("select s from Station s " +
                 "join fetch s.settlement settl join fetch settl.region r " +
                 "join fetch r.country c where s.id = :id",
                 Station.class)
                 .setParameter("id", integer)
-                .getSingleResult());
+                .getResultStream()
+                .findFirst();
     }
 
     @Override
