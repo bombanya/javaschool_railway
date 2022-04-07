@@ -47,6 +47,7 @@ public class RouteDAOImpl implements RouteDAO {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Route> findByTwoSettlements(int settl1, int settl2) {
         return em.createQuery("select distinct r from Route r join fetch " +
                                 "r.routeStations rs join fetch rs.station s " +
@@ -58,6 +59,16 @@ public class RouteDAOImpl implements RouteDAO {
                         Route.class)
                 .setParameter("settl1", settl1)
                 .setParameter("settl2", settl2)
+                .getResultList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Route> findByStation(int station) {
+        return em.createQuery("select distinct r from Route r join " +
+                "r.routeStations rs join rs.station s where s.id = :stationId",
+                Route.class)
+                .setParameter("stationId", station)
                 .getResultList();
     }
 }

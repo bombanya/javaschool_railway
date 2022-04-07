@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.PersistenceException;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -76,5 +77,10 @@ public class RunUpdateService {
                         .httpStatus(HttpStatus.NOT_FOUND)
                         .errorMessage("No such run update")
                         .build());
+    }
+
+    @Transactional(readOnly = true)
+    public ServiceAnswer<List<RunUpdate>> getByStationId(int stationId){
+        return ServiceAnswerHelper.ok(dao.findByStation(stationId));
     }
 }

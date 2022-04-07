@@ -35,6 +35,11 @@ public class RouteService {
     }
 
     @Transactional(readOnly = true)
+    public ServiceAnswer<List<Route>> getByStationId(int stationId){
+        return ServiceAnswerHelper.ok(dao.findByStation(stationId));
+    }
+
+    @Transactional(readOnly = true)
     public ServiceAnswer<Route> getById(int id){
         return dao.findById(id)
                 .map(ServiceAnswerHelper::ok)

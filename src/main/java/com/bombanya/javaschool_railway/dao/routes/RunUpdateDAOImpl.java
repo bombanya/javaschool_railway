@@ -38,4 +38,14 @@ public class RunUpdateDAOImpl implements RunUpdateDAO {
     public List<RunUpdate> findAll() {
         return null;
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<RunUpdate> findByStation(int stationId) {
+        return em.createQuery("select ru from RunUpdate ru join fetch ru.run " +
+                "join fetch ru.station s where s.id = :stationId",
+                RunUpdate.class)
+                .setParameter("stationId", stationId)
+                .getResultList();
+    }
 }

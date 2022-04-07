@@ -21,6 +21,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -127,6 +128,14 @@ public class RunService {
                 .plus(station.getStageArrival(), ChronoUnit.MINUTES)
                 .atZone(station.getStation().getSettlement().getTimeZone())
                 .toLocalDateTime();
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<RouteStation> getLastStationOnRun(Run run){
+        return run.getRoute()
+                .getRouteStations()
+                .stream()
+                .max(Comparator.comparing(RouteStation::getSerialNumberOnTheRoute));
     }
 
     @Transactional
