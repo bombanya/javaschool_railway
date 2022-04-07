@@ -8,6 +8,7 @@ import com.bombanya.javaschool_railway.entities.routes.RunUpdate;
 import com.bombanya.javaschool_railway.entities.routes.RunUpdateId;
 import com.bombanya.javaschool_railway.services.ServiceAnswerHelper;
 import com.bombanya.javaschool_railway.services.geography.StationService;
+import com.bombanya.javaschool_railway.services.schedule.ScheduleNotifier;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
@@ -24,6 +25,7 @@ public class RunUpdateService {
     private final RunUpdateDAO dao;
     private final RunService runService;
     private final StationService stationService;
+    private final ScheduleNotifier notifier;
 
     @Transactional
     public ServiceAnswer<RunUpdate> updateStationSchedule(int runId, int stationId,
@@ -32,6 +34,8 @@ public class RunUpdateService {
         if (runUpdateWrapper.isSuccess()){
             runUpdateWrapper.getServiceResult().setArrivalDelta(arrivalDelta);
             runUpdateWrapper.getServiceResult().setDepartureDelta(departureDelta);
+            notifier.notifyJmsClients(runUpdateWrapper.getServiceResult().getRun(), stationId,
+                    runUpdateWrapper.getServiceResult());
             return runUpdateWrapper;
         }
         ServiceAnswer<Run> runWrapper = runService.getById(runId);
@@ -57,6 +61,7 @@ public class RunUpdateService {
                 .build();
         try{
             dao.save(runUpdate);
+            notifier.notifyJmsClients(run, stationId, runUpdate);
             return ServiceAnswerHelper.ok(runUpdate);
         } catch (PersistenceException e) {
             if (e.getCause() == null ||

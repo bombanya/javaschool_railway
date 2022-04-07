@@ -3,7 +3,7 @@ package com.bombanya.javaschool_railway.controllers;
 import com.bombanya.javaschool_railway.entities.ServiceAnswer;
 import com.bombanya.javaschool_railway.entities.stationSchedule.StationScheduleInfo;
 import com.bombanya.javaschool_railway.services.ServiceAnswerHelper;
-import com.bombanya.javaschool_railway.services.StationScheduleService;
+import com.bombanya.javaschool_railway.services.schedule.StationScheduleService;
 import com.bombanya.javaschool_railway.utils.JacksonView;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.RequiredArgsConstructor;

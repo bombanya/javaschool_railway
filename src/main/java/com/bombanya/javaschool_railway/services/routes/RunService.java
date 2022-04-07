@@ -9,6 +9,7 @@ import com.bombanya.javaschool_railway.entities.routes.Run;
 import com.bombanya.javaschool_railway.entities.trains.Train;
 import com.bombanya.javaschool_railway.services.ServiceAnswerHelper;
 import com.bombanya.javaschool_railway.services.geography.StationService;
+import com.bombanya.javaschool_railway.services.schedule.ScheduleNotifier;
 import com.bombanya.javaschool_railway.services.trains.TrainService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,12 +17,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -31,6 +30,7 @@ public class RunService {
     private final RouteService routeService;
     private final TrainService trainService;
     private final StationService stationService;
+    private final ScheduleNotifier notifier;
 
     @Transactional
     public ServiceAnswer<Run> saveNew(int routeId, int trainID, Instant startUtc) {
@@ -83,61 +83,6 @@ public class RunService {
         return ServiceAnswerHelper.ok(dao.findByTrainId(trainId));
     }
 
-    @Transactional(readOnly = true)
-    public ServiceAnswer<RouteStation> getRouteStationFromRunBySettlId(Run run, int settlId){
-        return run.getRoute()
-                .getRouteStations()
-                .stream()
-                .filter(routeStation -> routeStation
-                        .getStation()
-                        .getSettlement()
-                        .getId()
-                        .equals(settlId))
-                .findFirst()
-                .map(ServiceAnswerHelper::ok)
-                .orElseGet(() ->
-                        ServiceAnswerHelper.badRequest("No such settlement on the run"));
-    }
-
-    @Transactional(readOnly = true)
-    public ServiceAnswer<RouteStation> getRouteStationFromRunByStationId(Run run, int stationId){
-        return run.getRoute()
-                .getRouteStations()
-                .stream()
-                .filter(routeStation -> routeStation
-                        .getStation()
-                        .getId()
-                        .equals(stationId))
-                .findFirst()
-                .map(ServiceAnswerHelper::ok)
-                .orElseGet(() ->
-                        ServiceAnswerHelper.badRequest("No such station on the run"));
-    }
-
-    @Transactional(readOnly = true)
-    public LocalDateTime getStationLocalTimeDeparture(Run run, RouteStation station){
-        return run.getStartUtc()
-                .plus(station.getStageDeparture(), ChronoUnit.MINUTES)
-                .atZone(station.getStation().getSettlement().getTimeZone())
-                .toLocalDateTime();
-    }
-
-    @Transactional(readOnly = true)
-    public LocalDateTime getStationLocalTimeArrival(Run run, RouteStation station){
-        return run.getStartUtc()
-                .plus(station.getStageArrival(), ChronoUnit.MINUTES)
-                .atZone(station.getStation().getSettlement().getTimeZone())
-                .toLocalDateTime();
-    }
-
-    @Transactional(readOnly = true)
-    public Optional<RouteStation> getLastStationOnRun(Run run){
-        return run.getRoute()
-                .getRouteStations()
-                .stream()
-                .max(Comparator.comparing(RouteStation::getSerialNumberOnTheRoute));
-    }
-
     @Transactional
     public ServiceAnswer<Void> cancelStation(int runId, int stationId){
         ServiceAnswer<Run> runWrapper = getById(runId);
@@ -155,6 +100,7 @@ public class RunService {
                 .noneMatch(cancelled -> cancelled.getId().equals(station.getId()));
         if (stationIsOnRoute && isNotAlreadyCancelled){
             run.getCancelledStations().add(station);
+            notifier.notifyJmsClients(run, stationId, null);
             return ServiceAnswerHelper.ok(null);
         }
         else return ServiceAnswerHelper.badRequest(null);

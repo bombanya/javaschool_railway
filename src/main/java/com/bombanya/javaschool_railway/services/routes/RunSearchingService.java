@@ -22,6 +22,7 @@ public class RunSearchingService {
     private final RunService runService;
     private final TicketService ticketService;
     private final RouteService routeService;
+    private final RunUtils runUtils;
 
     @Transactional(readOnly = true)
     public ServiceAnswer<List<Run>> getByStartAndFinishSettlementsAndStartDay(int settlFrom,
@@ -34,9 +35,9 @@ public class RunSearchingService {
                         .getServiceResult()
                         .stream())
                 .filter(run -> {
-                    RouteStation startStation = runService.getRouteStationFromRunBySettlId(run, settlFrom)
+                    RouteStation startStation = runUtils.getRouteStationFromRunBySettlId(run, settlFrom)
                             .getServiceResult();
-                    return runService.getStationLocalTimeDeparture(run, startStation)
+                    return runUtils.getStationLocalTimeDeparture(run, startStation)
                             .toLocalDate()
                             .equals(date);
                 })
@@ -87,14 +88,14 @@ public class RunSearchingService {
 
     @Transactional(readOnly = true)
     public RunSearchingResultDTO getResultDTOFromRun(Run run, int settlFrom, int settlTo){
-        RouteStation from = runService.getRouteStationFromRunBySettlId(run, settlFrom).getServiceResult();
-        RouteStation to = runService.getRouteStationFromRunBySettlId(run, settlTo).getServiceResult();
+        RouteStation from = runUtils.getRouteStationFromRunBySettlId(run, settlFrom).getServiceResult();
+        RouteStation to = runUtils.getRouteStationFromRunBySettlId(run, settlTo).getServiceResult();
         return RunSearchingResultDTO.builder()
                 .runId(run.getId())
                 .startStation(from.getStation())
                 .finishStation(to.getStation())
-                .startStationTimeDeparture(runService.getStationLocalTimeDeparture(run, from))
-                .finishStationTimeArrival(runService.getStationLocalTimeArrival(run, to))
+                .startStationTimeDeparture(runUtils.getStationLocalTimeDeparture(run, from))
+                .finishStationTimeArrival(runUtils.getStationLocalTimeArrival(run, to))
                 .ticketsAvailable(ticketService.countAvailableTickets(run.getId(),
                                 from.getSerialNumberOnTheRoute(),
                                 to.getSerialNumberOnTheRoute())
