@@ -9,4 +9,6 @@ public class JacksonView {
     public interface TrainFullInfo extends UserInfo {}
 
     public interface RouteFullInfo extends UserInfo {}
+
+    public interface RunFullInfo extends RouteFullInfo {}
 }

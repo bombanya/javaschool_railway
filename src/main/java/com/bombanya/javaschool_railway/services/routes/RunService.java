@@ -2,11 +2,13 @@ package com.bombanya.javaschool_railway.services.routes;
 
 import com.bombanya.javaschool_railway.dao.routes.RunDAO;
 import com.bombanya.javaschool_railway.entities.ServiceAnswer;
+import com.bombanya.javaschool_railway.entities.geography.Station;
 import com.bombanya.javaschool_railway.entities.routes.Route;
 import com.bombanya.javaschool_railway.entities.routes.RouteStation;
 import com.bombanya.javaschool_railway.entities.routes.Run;
 import com.bombanya.javaschool_railway.entities.trains.Train;
 import com.bombanya.javaschool_railway.services.ServiceAnswerHelper;
+import com.bombanya.javaschool_railway.services.geography.StationService;
 import com.bombanya.javaschool_railway.services.trains.TrainService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
@@ -26,6 +29,7 @@ public class RunService {
     private final RunDAO dao;
     private final RouteService routeService;
     private final TrainService trainService;
+    private final StationService stationService;
 
     @Transactional
     public ServiceAnswer<Run> saveNew(int routeId, int trainID, Instant startUtc) {
@@ -46,6 +50,7 @@ public class RunService {
                 .train(train.getServiceResult())
                 .startUtc(startUtc)
                 .finishUtc(startUtc.plus(finish, ChronoUnit.MINUTES))
+                .cancelledStations(new ArrayList<>())
                 .build();
         dao.save(newRun);
         return ServiceAnswerHelper.ok(newRun);
@@ -124,5 +129,25 @@ public class RunService {
                 .toLocalDateTime();
     }
 
-
+    @Transactional
+    public ServiceAnswer<Void> cancelStation(int runId, int stationId){
+        ServiceAnswer<Run> runWrapper = getById(runId);
+        ServiceAnswer<Station> stationWrapper = stationService.getById(stationId);
+        if (!runWrapper.isSuccess()) return ServiceAnswerHelper.badRequest(runWrapper.getErrorMessage());
+        if (!stationWrapper.isSuccess()) return ServiceAnswerHelper.badRequest(stationWrapper.getErrorMessage());
+        Run run = runWrapper.getServiceResult();
+        Station station = stationWrapper.getServiceResult();
+        boolean stationIsOnRoute = run.getRoute()
+                .getRouteStations()
+                .stream()
+                .anyMatch(routeStation -> routeStation.getStation().getId().equals(station.getId()));
+        boolean isNotAlreadyCancelled = run.getCancelledStations()
+                .stream()
+                .noneMatch(cancelled -> cancelled.getId().equals(station.getId()));
+        if (stationIsOnRoute && isNotAlreadyCancelled){
+            run.getCancelledStations().add(station);
+            return ServiceAnswerHelper.ok(null);
+        }
+        else return ServiceAnswerHelper.badRequest(null);
+    }
 }

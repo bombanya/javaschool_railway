@@ -90,6 +90,13 @@ public class RoutesController {
         return ServiceAnswerHelper.wrapIntoResponse(runService.getAll());
     }
 
+    @PostMapping("/run/cancelstation/{runId}/{stationId}")
+    @JsonView(JacksonView.UserInfo.class)
+    public ResponseEntity<ServiceAnswer<Void>> cancelStationOnRun(@PathVariable int runId,
+                                                                  @PathVariable int stationId){
+        return ServiceAnswerHelper.wrapIntoResponse(runService.cancelStation(runId, stationId));
+    }
+
     @GetMapping("/run/search/noticketchecking/{settlFromId}/{settleToId}/{date}")
     @JsonView(JacksonView.UserInfo.class)
     public ResponseEntity<ServiceAnswer<List<Run>>>
