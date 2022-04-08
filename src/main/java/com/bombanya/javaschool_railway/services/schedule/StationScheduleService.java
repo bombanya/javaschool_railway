@@ -22,7 +22,7 @@ public class StationScheduleService {
     private final RouteService routeService;
     private final RunService runService;
     private final RunUpdateService runUpdateService;
-    private final ScheduleNotifier scheduleNotifier;
+    private final ScheduleUtils scheduleUtils;
 
     @Transactional(readOnly = true)
     public ServiceAnswer<List<StationScheduleInfo>> getStationSchedule(int stationId, LocalDate date){
@@ -31,7 +31,7 @@ public class StationScheduleService {
                 .getServiceResult()
                 .stream()
                 .flatMap(route -> runService.getAllByRouteId(route.getId()).getServiceResult().stream())
-                .map(run -> scheduleNotifier.generateScheduleInfo(run, stationId, runUpdates.stream()
+                .map(run -> scheduleUtils.generateScheduleInfo(run, stationId, runUpdates.stream()
                         .filter(runUpdate -> runUpdate
                                 .getRun()
                                 .getId()
