@@ -1,5 +1,6 @@
 package com.bombanya.javaschool_railway.services.schedule;
 
+import com.bombanya.javaschool_railway.entities.routes.RouteStation;
 import com.bombanya.javaschool_railway.entities.routes.Run;
 import com.bombanya.javaschool_railway.entities.routes.RunUpdate;
 import com.bombanya.javaschool_railway.utils.JacksonView;
@@ -30,5 +31,10 @@ public class ScheduleNotifier {
         });
     }
 
+    public void notifyAllStationsNewRun(Run run) {
+        for (RouteStation routeStation : run.getRoute().getRouteStations()) {
+            notifyJmsClients(run, routeStation.getStation().getId(), Optional.empty());
+        }
+    }
 
 }

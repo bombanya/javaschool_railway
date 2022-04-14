@@ -55,6 +55,7 @@ public class RunService {
                 .cancelledStations(new ArrayList<>())
                 .build();
         dao.save(newRun);
+        notifier.notifyAllStationsNewRun(newRun);
         return ServiceAnswerHelper.ok(newRun);
     }
 
