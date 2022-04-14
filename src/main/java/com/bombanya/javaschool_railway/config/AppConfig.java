@@ -1,5 +1,8 @@
 package com.bombanya.javaschool_railway.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.flywaydb.core.Flyway;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.*;
@@ -110,5 +113,12 @@ public class AppConfig {
         JmsTemplate jmsTemplate =  new JmsTemplate(factory);
         jmsTemplate.setDestinationResolver(new JndiDestinationResolver());
         return jmsTemplate;
+    }
+
+    @Bean
+    public ObjectMapper defaultMapper() {
+        return JsonMapper.builder()
+                .addModule(new JavaTimeModule())
+                .build();
     }
 }

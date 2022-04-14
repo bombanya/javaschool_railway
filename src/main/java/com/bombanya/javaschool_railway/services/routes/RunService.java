@@ -21,6 +21,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -100,7 +101,7 @@ public class RunService {
                 .noneMatch(cancelled -> cancelled.getId().equals(station.getId()));
         if (stationIsOnRoute && isNotAlreadyCancelled){
             run.getCancelledStations().add(station);
-            notifier.notifyJmsClients(run, stationId, null);
+            notifier.notifyJmsClients(run, stationId, Optional.empty());
             return ServiceAnswerHelper.ok(null);
         }
         else return ServiceAnswerHelper.badRequest(null);

@@ -103,19 +103,19 @@ public class TicketService {
             for (Ticket ticket: tickets){
                 if (run == null || !Objects.equals(run.getId(), ticket.getRun().getId())){
                     ServiceAnswer<Run> runWrapper = runService.getById(ticket.getRun().getId());
-                    if (!runWrapper.isSuccess()) throw new PersistenceException();
+                    if (!runWrapper.isSuccess()) return ServiceAnswerHelper.badRequest("Invalid run");
                     run = runWrapper.getServiceResult();
                 }
                 ServiceAnswer<RouteStation> from = runUtils.getRouteStationFromRunByStationId(run,
                         ticket.getStartStation().getId());
-                if (!from.isSuccess()) throw new PersistenceException();
+                if (!from.isSuccess()) return ServiceAnswerHelper.badRequest("Invalid station");
                 ServiceAnswer<RouteStation> to = runUtils.getRouteStationFromRunByStationId(run,
                         ticket.getFinishStation().getId());
-                if (!to.isSuccess()) throw new PersistenceException();
+                if (!to.isSuccess()) return ServiceAnswerHelper.badRequest("Invalid station");
                 ticket.setStartSerial(from.getServiceResult().getSerialNumberOnTheRoute());
                 ticket.setFinishSerial(to.getServiceResult().getSerialNumberOnTheRoute());
                 ServiceAnswer<Seat> seatWrapper = seatService.getById(ticket.getSeat().getId());
-                if (!seatWrapper.isSuccess()) throw new PersistenceException();
+                if (!seatWrapper.isSuccess()) return ServiceAnswerHelper.badRequest("Invalid seat");
                 ticket.setPrice(countPrice(run.getRoute(),
                         from.getServiceResult().getSerialNumberOnTheRoute(),
                         to.getServiceResult().getSerialNumberOnTheRoute(),

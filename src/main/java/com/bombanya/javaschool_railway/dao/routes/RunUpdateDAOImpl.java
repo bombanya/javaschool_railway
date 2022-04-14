@@ -35,8 +35,12 @@ public class RunUpdateDAOImpl implements RunUpdateDAO {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<RunUpdate> findAll() {
-        return null;
+        return em.createQuery("select ru from RunUpdate ru join fetch ru.run " +
+                "join fetch ru.station",
+                RunUpdate.class)
+                .getResultList();
     }
 
     @Override

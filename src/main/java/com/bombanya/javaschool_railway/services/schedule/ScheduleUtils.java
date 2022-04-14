@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.temporal.ChronoUnit;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -19,21 +20,19 @@ public class ScheduleUtils {
     private final RunUtils runUtils;
 
     @Transactional(readOnly = true)
-    public StationScheduleInfo generateScheduleInfo(Run run, int stationId, RunUpdate update){
+    public StationScheduleInfo generateScheduleInfo(Run run, int stationId, Optional<RunUpdate> update){
         RouteStation finalStation = runUtils.getLastStationOnRun(run).get();
         RouteStation station = runUtils.getRouteStationFromRunByStationId(run, stationId)
                 .getServiceResult();
         long arrivalDelta = 0;
         long departureDelta = 0;
         TrainStatus status = TrainStatus.ON_TIME;
-        if (update != null) {
+        if (update.isPresent()) {
             status = TrainStatus.DELAYED;
-            arrivalDelta = update.getArrivalDelta();
-            departureDelta = update.getDepartureDelta();
+            arrivalDelta = update.get().getArrivalDelta();
+            departureDelta = update.get().getDepartureDelta();
         }
-        if (run.getCancelledStations()
-                .stream()
-                .anyMatch(station1 -> station1.getId().equals(stationId))) status = TrainStatus.CANCELLED;
+        if (checkIfStationCancelled(run, stationId)) status = TrainStatus.CANCELLED;
         return StationScheduleInfo.builder()
                 .runId(run.getId())
                 .trainId(run.getTrain().getId())
@@ -47,5 +46,11 @@ public class ScheduleUtils {
                 .finalStationName(finalStation.getStation().getName())
                 .status(status)
                 .build();
+    }
+
+    private boolean checkIfStationCancelled(Run run, int stationId) {
+        return run.getCancelledStations()
+                .stream()
+                .anyMatch(station1 -> station1.getId().equals(stationId));
     }
 }

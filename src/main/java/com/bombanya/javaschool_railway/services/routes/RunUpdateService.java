@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.PersistenceException;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -35,7 +36,7 @@ public class RunUpdateService {
             runUpdateWrapper.getServiceResult().setArrivalDelta(arrivalDelta);
             runUpdateWrapper.getServiceResult().setDepartureDelta(departureDelta);
             notifier.notifyJmsClients(runUpdateWrapper.getServiceResult().getRun(), stationId,
-                    runUpdateWrapper.getServiceResult());
+                    Optional.ofNullable(runUpdateWrapper.getServiceResult()));
             return runUpdateWrapper;
         }
         ServiceAnswer<Run> runWrapper = runService.getById(runId);
@@ -61,7 +62,7 @@ public class RunUpdateService {
                 .build();
         try{
             dao.save(runUpdate);
-            notifier.notifyJmsClients(run, stationId, runUpdate);
+            notifier.notifyJmsClients(run, stationId, Optional.ofNullable(runUpdate));
             return ServiceAnswerHelper.ok(runUpdate);
         } catch (PersistenceException e) {
             if (e.getCause() == null ||

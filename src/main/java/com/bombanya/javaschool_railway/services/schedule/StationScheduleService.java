@@ -36,8 +36,7 @@ public class StationScheduleService {
                                 .getRun()
                                 .getId()
                                 .equals(run.getId()))
-                        .findFirst()
-                        .orElse(null)))
+                        .findFirst()))
                 .filter(stationScheduleInfo -> stationScheduleInfo.getDeparture() != null &&
                         stationScheduleInfo.getDeparture().toLocalDate().equals(date) ||
                         stationScheduleInfo.getArrival() != null &&

@@ -25,13 +25,18 @@ public class UserRoleDAOImpl implements UserRoleDAO {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Optional<UserRoleEntity> findById(Integer integer) {
-        return Optional.empty();
+        if (integer == null) return Optional.empty();
+        return Optional.ofNullable(em.find(UserRoleEntity.class, integer));
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<UserRoleEntity> findAll() {
-        return null;
+        return em.createQuery("select role from UserRoleEntity role",
+                UserRoleEntity.class)
+                .getResultList();
     }
 
     @Override

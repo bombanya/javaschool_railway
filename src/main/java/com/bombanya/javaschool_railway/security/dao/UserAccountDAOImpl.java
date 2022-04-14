@@ -23,22 +23,34 @@ public class UserAccountDAOImpl implements UserAccountDAO {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Optional<UserAccount> findById(Integer integer) {
-        return Optional.empty();
+        if (integer == null) return Optional.empty();
+        return em.createQuery("select distinct u from UserAccount u " +
+                        "join fetch u.roles where u.id = :id",
+                UserAccount.class)
+                .setParameter("id", integer)
+                .getResultStream()
+                .findFirst();
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<UserAccount> findAll() {
-        return null;
+        return em.createQuery("select distinct u from UserAccount u " +
+                "join fetch u.roles",
+                UserAccount.class)
+                .getResultList();
     }
 
     @Override
     @Transactional(readOnly = true)
     public Optional<UserAccount> findByUsername(String username) {
-        return Optional.ofNullable(em.createQuery("select distinct u from UserAccount u " +
+        return em.createQuery("select distinct u from UserAccount u " +
                 "join fetch u.roles where u.username = :username",
                         UserAccount.class)
                 .setParameter("username", username)
-                .getSingleResult());
+                .getResultStream()
+                .findFirst();
     }
 }
