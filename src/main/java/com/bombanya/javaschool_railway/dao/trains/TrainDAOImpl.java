@@ -26,12 +26,13 @@ public class TrainDAOImpl implements TrainDAO {
     @Override
     public Optional<Train> findById(Integer integer) {
         if (integer == null) return Optional.empty();
-        return Optional.ofNullable(em.createQuery("select distinct t from Train t " +
+        return em.createQuery("select distinct t from Train t " +
                 "join fetch t.wagons w join fetch w.wagonType wt where t.id = :id",
                         Train.class)
                 .setParameter("id", integer)
                 .setHint(QueryHints.HINT_PASS_DISTINCT_THROUGH, false)
-                .getSingleResult());
+                .getResultStream()
+                .findFirst();
     }
 
     @Override

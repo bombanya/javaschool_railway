@@ -1,17 +1,24 @@
 package com.bombanya.javaschool_railway.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.flywaydb.core.Flyway;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.*;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.jms.core.JmsTemplate;
+import org.springframework.jms.support.destination.JndiDestinationResolver;
+import org.springframework.jndi.JndiObjectFactoryBean;
 import org.springframework.orm.hibernate5.HibernateTransactionManager;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import javax.annotation.PostConstruct;
+import javax.jms.ConnectionFactory;
 import javax.sql.DataSource;
 import java.util.Properties;
 import java.util.TimeZone;
@@ -88,5 +95,30 @@ public class AppConfig {
 
         flyway.migrate();
         return flyway;
+    }
+
+    @Bean
+    public JndiObjectFactoryBean connectionFactory(){
+        JndiObjectFactoryBean bean = new JndiObjectFactoryBean();
+        bean.setJndiName("java:/remoteJms");
+        bean.setLookupOnStartup(true);
+        bean.setCache(true);
+        bean.setProxyInterface(ConnectionFactory.class);
+        return bean;
+    }
+
+    @Bean
+    @DependsOn("connectionFactory")
+    public JmsTemplate jmsTemplate(ConnectionFactory factory){
+        JmsTemplate jmsTemplate =  new JmsTemplate(factory);
+        jmsTemplate.setDestinationResolver(new JndiDestinationResolver());
+        return jmsTemplate;
+    }
+
+    @Bean
+    public ObjectMapper defaultMapper() {
+        return JsonMapper.builder()
+                .addModule(new JavaTimeModule())
+                .build();
     }
 }

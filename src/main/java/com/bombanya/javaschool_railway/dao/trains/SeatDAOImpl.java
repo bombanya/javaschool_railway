@@ -35,11 +35,12 @@ public class SeatDAOImpl implements SeatDAO {
     @Transactional(readOnly = true)
     public Optional<Seat> findById(Integer integer) {
         if (integer == null) return Optional.empty();
-        return Optional.ofNullable(em.createQuery("select s from Seat s " +
+        return em.createQuery("select s from Seat s " +
                 "join fetch s.wagonType wt where s.id = :id",
                         Seat.class)
                 .setParameter("id", integer)
-                .getSingleResult());
+                .getResultStream()
+                .findFirst();
     }
 
     @Override

@@ -58,4 +58,15 @@ public class StationService {
     public ServiceAnswer<List<Station>> getByNameOrSettlNameStartsWith(String nameStart){
         return ServiceAnswerHelper.ok(dao.findByNameOrSettlNameStartsWith(nameStart));
     }
+
+    @Transactional(readOnly = true)
+    public ServiceAnswer<Station> getById(int stationId){
+        return dao.findById(stationId)
+                .map(ServiceAnswerHelper::ok)
+                .orElseGet(() -> ServiceAnswer.<Station>builder()
+                        .success(false)
+                        .httpStatus(HttpStatus.NOT_FOUND)
+                        .errorMessage("No such station")
+                        .build());
+    }
 }

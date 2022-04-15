@@ -24,13 +24,28 @@ public class TicketDAOImpl implements TicketDAO {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Optional<Ticket> findById(Integer integer) {
-        return Optional.empty();
+        if (integer == null) return Optional.empty();
+        return em.createQuery("select t from Ticket t join fetch t.run r " +
+                "join fetch t.seat s join fetch t.wagon w join fetch " +
+                "t.passenger p join fetch t.startStation join fetch t.finishStation " +
+                "join fetch w.wagonType where t.id = :id",
+                Ticket.class)
+                .setParameter("id", integer)
+                .getResultStream()
+                .findFirst();
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Ticket> findAll() {
-        return null;
+        return em.createQuery("select t from Ticket t join fetch t.run r " +
+                                "join fetch t.seat s join fetch t.wagon w join fetch " +
+                                "t.passenger p join fetch t.startStation join fetch t.finishStation " +
+                                "join fetch w.wagonType",
+                        Ticket.class)
+                .getResultList();
     }
 
     @Override
@@ -55,6 +70,7 @@ public class TicketDAOImpl implements TicketDAO {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Ticket> getAllRunTickets(int runId) {
         return em.createQuery("select t from Ticket t join fetch t.run r " +
                 "join fetch t.seat s join fetch t.wagon w join fetch " +

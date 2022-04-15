@@ -1,16 +1,10 @@
 package com.bombanya.javaschool_railway.controllers;
 
+import com.bombanya.javaschool_railway.entities.routes.*;
+import com.bombanya.javaschool_railway.services.routes.*;
 import com.bombanya.javaschool_railway.utils.JacksonView;
 import com.bombanya.javaschool_railway.entities.ServiceAnswer;
-import com.bombanya.javaschool_railway.entities.routes.Route;
-import com.bombanya.javaschool_railway.entities.routes.RouteStation;
-import com.bombanya.javaschool_railway.entities.routes.Run;
-import com.bombanya.javaschool_railway.entities.routes.RunSearchingResultDTO;
 import com.bombanya.javaschool_railway.services.ServiceAnswerHelper;
-import com.bombanya.javaschool_railway.services.routes.RouteService;
-import com.bombanya.javaschool_railway.services.routes.RouteStationService;
-import com.bombanya.javaschool_railway.services.routes.RunSearchingService;
-import com.bombanya.javaschool_railway.services.routes.RunService;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -30,6 +24,7 @@ public class RoutesController {
     private final RouteStationService routeStationService;
     private final RunService runService;
     private final RunSearchingService runSearchingService;
+    private final RunUpdateService runUpdateService;
 
     //public
     @GetMapping("/public/run/search/check/{settlFromId}/{settlToId}/{date}")
@@ -90,6 +85,13 @@ public class RoutesController {
         return ServiceAnswerHelper.wrapIntoResponse(runService.getAll());
     }
 
+    @PostMapping("/run/cancelstation/{runId}/{stationId}")
+    @JsonView(JacksonView.UserInfo.class)
+    public ResponseEntity<ServiceAnswer<Void>> cancelStationOnRun(@PathVariable int runId,
+                                                                  @PathVariable int stationId){
+        return ServiceAnswerHelper.wrapIntoResponse(runService.cancelStation(runId, stationId));
+    }
+
     @GetMapping("/run/search/noticketchecking/{settlFromId}/{settleToId}/{date}")
     @JsonView(JacksonView.UserInfo.class)
     public ResponseEntity<ServiceAnswer<List<Run>>>
@@ -106,5 +108,15 @@ public class RoutesController {
     @JsonView(JacksonView.UserInfo.class)
     public ResponseEntity<ServiceAnswer<List<RunSearchingResultDTO>>> getTrainSchedule(@PathVariable int trainId){
         return ServiceAnswerHelper.wrapIntoResponse(runSearchingService.getTrainSchedule(trainId));
+    }
+
+    @PostMapping("/run/updatestation/{runId}/{stationId}/{arrivalDelta}/{departureDelta}")
+    @JsonView(JacksonView.MinimalInfo.class)
+    public ResponseEntity<ServiceAnswer<RunUpdate>> updateStationOnRun(@PathVariable int runId,
+                                                                       @PathVariable int stationId,
+                                                                       @PathVariable long arrivalDelta,
+                                                                       @PathVariable long departureDelta){
+        return ServiceAnswerHelper.wrapIntoResponse(runUpdateService.updateStationSchedule(runId,
+                stationId, arrivalDelta, departureDelta));
     }
 }

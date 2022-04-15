@@ -26,18 +26,19 @@ public class SettlementDAOImpl implements SettlementDAO {
     @Transactional(readOnly = true)
     public Optional<Settlement> findById(Integer integer) {
         if (integer == null) return Optional.empty();
-        return Optional.ofNullable(em.createQuery("select s from Settlement s " +
+        return em.createQuery("select s from Settlement s " +
                 "join fetch s.region r join fetch r.country c " +
                 "where s.id = :id",
                         Settlement.class)
                 .setParameter("id", integer)
-                .getSingleResult());
+                .getResultStream()
+                .findFirst();
     }
 
     @Override
     @Transactional(readOnly = true)
     public Optional<Settlement> findByNames(String countryName, String regionName, String name) {
-        return Optional.ofNullable(em.createQuery("select s from Settlement s " +
+        return em.createQuery("select s from Settlement s " +
                 "join fetch s.region r join fetch r.country c " +
                 "where s.name = :name and r.name = :regionName " +
                 "and c.name = :countryName",
@@ -45,7 +46,8 @@ public class SettlementDAOImpl implements SettlementDAO {
                 .setParameter("name", name)
                 .setParameter("regionName", regionName)
                 .setParameter("countryName", countryName)
-                .getSingleResult());
+                .getResultStream()
+                .findFirst();
     }
 
     @Override

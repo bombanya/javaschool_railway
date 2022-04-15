@@ -37,6 +37,12 @@ public class GeographyController {
                 .getByNameStartsWith(nameStart));
     }
 
+    @GetMapping("/public/station/all")
+    @JsonView(JacksonView.UserInfo.class)
+    public ResponseEntity<ServiceAnswer<List<Station>>> getAllStations(){
+        return ServiceAnswerHelper.wrapIntoResponse(stationService.getAll());
+    }
+
     //private
     @PostMapping("/country/new/{country}")
     @JsonView(JacksonView.UserInfo.class)
@@ -86,12 +92,6 @@ public class GeographyController {
     public ResponseEntity<ServiceAnswer<Station>> saveNewStationBySettlId(@PathVariable int settlId,
                                                                           @PathVariable String name){
         return ServiceAnswerHelper.wrapIntoResponse(stationService.saveNewBySettlId(settlId, name));
-    }
-
-    @GetMapping("/station/all")
-    @JsonView(JacksonView.UserInfo.class)
-    public ResponseEntity<ServiceAnswer<List<Station>>> getAllStations(){
-        return ServiceAnswerHelper.wrapIntoResponse(stationService.getAll());
     }
 
     @GetMapping("/station/all/name/settlname/{nameStart}")

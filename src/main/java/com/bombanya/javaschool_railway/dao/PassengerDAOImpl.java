@@ -37,6 +37,7 @@ public class PassengerDAOImpl implements PassengerDAO {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Optional<Passenger> findByPassport(String passportId) {
         return Optional.ofNullable(em.unwrap(Session.class)
                 .bySimpleNaturalId(Passenger.class)

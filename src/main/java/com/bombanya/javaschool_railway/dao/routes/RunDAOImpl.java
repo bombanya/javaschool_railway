@@ -27,7 +27,7 @@ public class RunDAOImpl implements RunDAO {
     @Transactional(readOnly = true)
     public Optional<Run> findById(Integer integer) {
         if (integer == null) return Optional.empty();
-        return Optional.ofNullable(em.createQuery("select distinct r from Run r " +
+        return em.createQuery("select distinct r from Run r " +
                                 "join fetch r.train t " +
                                 "join fetch r.route route join fetch route.routeStations rs " +
                                 "join fetch rs.station s join fetch s.settlement settl join " +
@@ -36,7 +36,8 @@ public class RunDAOImpl implements RunDAO {
                         Run.class)
                 .setParameter("id", integer)
                 .setHint(QueryHints.HINT_PASS_DISTINCT_THROUGH ,false)
-                .getSingleResult());
+                .getResultStream()
+                .findFirst();
     }
 
     @Override

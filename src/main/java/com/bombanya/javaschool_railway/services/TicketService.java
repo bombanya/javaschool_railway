@@ -9,6 +9,7 @@ import com.bombanya.javaschool_railway.entities.routes.Run;
 import com.bombanya.javaschool_railway.entities.trains.Seat;
 import com.bombanya.javaschool_railway.entities.trains.Wagon;
 import com.bombanya.javaschool_railway.services.routes.RunService;
+import com.bombanya.javaschool_railway.services.routes.RunUtils;
 import com.bombanya.javaschool_railway.services.trains.SeatService;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.exception.ConstraintViolationException;
@@ -27,6 +28,7 @@ public class TicketService {
     private final TicketDAO dao;
     private final RunService runService;
     private final SeatService seatService;
+    private final RunUtils runUtils;
 
     @Transactional(readOnly = true)
     public ServiceAnswer<Integer> countAvailableTickets(int runId, int serialFrom, int serialTo){
@@ -47,8 +49,8 @@ public class TicketService {
         ServiceAnswer<Run> runWrapper = runService.getById(runId);
         if (!runWrapper.isSuccess()) return ServiceAnswerHelper.badRequest(runWrapper.getErrorMessage());
         Run run = runWrapper.getServiceResult();
-        ServiceAnswer<RouteStation> from = runService.getRouteStationFromRunByStationId(run, stationFrom);
-        ServiceAnswer<RouteStation> to = runService.getRouteStationFromRunByStationId(run, stationTo);
+        ServiceAnswer<RouteStation> from = runUtils.getRouteStationFromRunByStationId(run, stationFrom);
+        ServiceAnswer<RouteStation> to = runUtils.getRouteStationFromRunByStationId(run, stationTo);
         if (!from.isSuccess()) return ServiceAnswerHelper.badRequest(from.getErrorMessage());
         if (!to.isSuccess()) return ServiceAnswerHelper.badRequest(to.getErrorMessage());
         List<Ticket> occupied = dao.getAllOccupiedOnRange(runId,
@@ -101,19 +103,19 @@ public class TicketService {
             for (Ticket ticket: tickets){
                 if (run == null || !Objects.equals(run.getId(), ticket.getRun().getId())){
                     ServiceAnswer<Run> runWrapper = runService.getById(ticket.getRun().getId());
-                    if (!runWrapper.isSuccess()) throw new PersistenceException();
+                    if (!runWrapper.isSuccess()) return ServiceAnswerHelper.badRequest("Invalid run");
                     run = runWrapper.getServiceResult();
                 }
-                ServiceAnswer<RouteStation> from = runService.getRouteStationFromRunByStationId(run,
+                ServiceAnswer<RouteStation> from = runUtils.getRouteStationFromRunByStationId(run,
                         ticket.getStartStation().getId());
-                if (!from.isSuccess()) throw new PersistenceException();
-                ServiceAnswer<RouteStation> to = runService.getRouteStationFromRunByStationId(run,
+                if (!from.isSuccess()) return ServiceAnswerHelper.badRequest("Invalid station");
+                ServiceAnswer<RouteStation> to = runUtils.getRouteStationFromRunByStationId(run,
                         ticket.getFinishStation().getId());
-                if (!to.isSuccess()) throw new PersistenceException();
+                if (!to.isSuccess()) return ServiceAnswerHelper.badRequest("Invalid station");
                 ticket.setStartSerial(from.getServiceResult().getSerialNumberOnTheRoute());
                 ticket.setFinishSerial(to.getServiceResult().getSerialNumberOnTheRoute());
                 ServiceAnswer<Seat> seatWrapper = seatService.getById(ticket.getSeat().getId());
-                if (!seatWrapper.isSuccess()) throw new PersistenceException();
+                if (!seatWrapper.isSuccess()) return ServiceAnswerHelper.badRequest("Invalid seat");
                 ticket.setPrice(countPrice(run.getRoute(),
                         from.getServiceResult().getSerialNumberOnTheRoute(),
                         to.getServiceResult().getSerialNumberOnTheRoute(),

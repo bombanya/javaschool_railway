@@ -35,12 +35,13 @@ public class RegionDAOImpl implements RegionDAO {
     @Override
     @Transactional(readOnly = true)
     public Optional<Region> findByNameAndCountryName(String name, String countryName) {
-        return Optional.ofNullable(em.createQuery("select r from Region r join fetch " +
+        return em.createQuery("select r from Region r join fetch " +
                 "r.country c where r.name = :name and c.name = :countryName"
                         , Region.class)
                 .setParameter("name", name)
                 .setParameter("countryName", countryName)
-                .getSingleResult());
+                .getResultStream()
+                .findFirst();
     }
 
     @Override

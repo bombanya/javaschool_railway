@@ -16,18 +16,23 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <junit.version>5.8.2</junit.version>
         <javax.servlet-api.version>4.0.1</javax.servlet-api.version>
-        <hibernate-core.verison>5.6.5.Final</hibernate-core.verison>
-        <spring-webmvc.version>5.3.16</spring-webmvc.version>
+        <hibernate-core.verison>5.6.7.Final</hibernate-core.verison>
+        <spring-webmvc.version>5.3.17</spring-webmvc.version>
         <lombok.version>1.18.22</lombok.version>
-        <reactive-streams.version>1.0.1</reactive-streams.version>
-        <spring-orm.version>5.3.16</spring-orm.version>
+        <reactive-streams.version>1.0.3</reactive-streams.version>
+        <spring-orm.version>5.3.17</spring-orm.version>
         <postgresql.version>42.3.3</postgresql.version>
-        <jackson-databind.version>2.13.1</jackson-databind.version>
+        <jackson-databind.version>2.13.2.2</jackson-databind.version>
         <spring-security-version>5.6.2</spring-security-version>
         <flyway-core.version>8.5.4</flyway-core.version>
         <jjwt-api.version>0.11.2</jjwt-api.version>
         <jjwt-impl.version>0.11.2</jjwt-impl.version>
         <jjwt-jackson.version>0.11.2</jjwt-jackson.version>
+        <spring-jms.version>5.3.18</spring-jms.version>
+        <javax.jms-api.version>2.0.1</javax.jms-api.version>
+        <jackson-datatype-jsr310.version>2.13.2</jackson-datatype-jsr310.version>
+        <mockito-core.version>4.4.0</mockito-core.version>
+        <mockito-junit-jupiter.version>4.4.0</mockito-junit-jupiter.version>
     </properties>
 
     <dependencies>
@@ -116,6 +121,34 @@
             <artifactId>jjwt-jackson</artifactId> <!-- or jjwt-gson if Gson is preferred -->
             <version>${jjwt-jackson.version}</version>
             <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-jms</artifactId>
+            <version>${spring-jms.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.jms</groupId>
+            <artifactId>javax.jms-api</artifactId>
+            <version>${javax.jms-api.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+            <version>${jackson-datatype-jsr310.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>${mockito-core.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-junit-jupiter</artifactId>
+            <version>${mockito-junit-jupiter.version}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
